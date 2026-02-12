@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "To ensure brand protection and accurate attribution, please cite the Refloow™ software suite as follows:"
+title: "Refloow™ Geo Forensics"
+abstract: "The official open-source OSINT forensics tool maintained by the Refloow™ Software Organization. A free, batch-capable image geolocation and digital forensics tool designed for investigators, analysts, and OSINT practitioners. It automatically extracts EXIF metadata from .jpg files, visualizes embedded GPS coordinates on interactive maps, and reconstructs chronological event timelines. By combining geospatial insights with metadata analysis, the tool empowers users to uncover hidden connections, validate digital evidence, and enhance situational awareness in open-source intelligence workflows"
+authors:
+  - name: "Refloow"
+    website: "https://refloow.com"
+    email: "legal@refloow.com"
+  - family-names: "Vuckovic"
+    given-names: "Veljko"
+    affiliation: "Refloow Founder"
+version: 1.0.0
+date-released: 2026-2-12
+license: "AGPL-3.0"
+repository-code: "https://github.com/Refloow/Refloow-Geo-Forensics"
+url: "https://refloow.com"
+keywords:
+  - "Refloow"
+  - "Refloow™"
+  - "Official"
+  - "open-source"
+  - "osin"
+  - "geolocation"
+  - "exif"
+  - "digital-forensics"
+  - "image-forensics"
+  - "metadata-extraction"
+  - "timeline-analysis"
+  - "investigation-tool"
