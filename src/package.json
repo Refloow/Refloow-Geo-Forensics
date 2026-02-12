@@ -1,0 +1,79 @@
+{
+  "name": "refloow-geo-forensics",
+  "version": "1.0.0",
+  "description": "Application which allows to tag photos to their geologactions using forensics methods of reading metadata and eexif data of photos.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "server": "node src/server.js",
+    "package": "electron-builder --win --publish never",
+    "package:mac": "electron-builder --mac --publish never",
+    "package:linux": "electron-builder --linux --publish never"
+  },
+  "author": "Veljko Vuckovic",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Refloow/Refloow-Geo-Forensics.git"
+  },
+  "dependencies": {
+    "exif-parser": "^0.1.12",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "electron": "^40.4.0",
+    "electron-builder": "^26.7.0"
+  },
+  "build": {
+    "appId": "com.refloow.geoforensics",
+    "productName": "Refloow Geo Forensics",
+    "copyright": "Copyright © Refloow",
+    "icon": "build/icon.ico",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "**/*",
+      "!**/*.ts",
+      "!npm-debug.log*",
+      "!**/.git",
+      "!**/.vscode",
+      "!**/.idea",
+      "!**/*.map",
+      "!node_modules/.bin/**/*",
+      "!node_modules/electron/**/*",
+      "!dist/electron/**/*.js"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icon.ico",
+      "target": "dmg"
+    },
+    "linux": {
+      "icon": "build/icon.ico",
+      "target": "AppImage"
+    },
+    "npmRebuild": false,
+    "nsis": {
+      "oneClick": false,
+      "license": "LICENSE",
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "shortcutName": "Refloow Geo Forensics",
+      "createDesktopShortcut": true,
+      "perMachine": true,
+      "uninstallDisplayName": "Refloow Geo Forensics"
+    }
+  }
+}

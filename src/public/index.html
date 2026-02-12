@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refloow GeoForensics</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Refloow GeoForensics</h1>
+            <span class="subtitle">TOOL FOR GEOLOCATION OF EVIDENCE</span>
+        </div>
+        <div style="font-size: 12px; color: #888;">Version 1.0.0</div>
+    </header>
+
+    <div id="controls">
+        <input type="text" id="folderPath" placeholder="Enter full path to the folder with images (npr. C:\Users\User\Desktop\Images)">
+        <button onclick="startScan()">Analyse</button>
+    </div>
+
+    <div id="main-area">
+        <div id="sidebar">
+            <div style="text-align: center; color: #888; margin-top: 20px;" id="status-msg">Waiting for scan...</div>
+            <div id="results-list"></div>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        var map = L.map('map').setView([44.0165, 21.0059], 7); // Centar Srbije
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        let markers = [];
+
+        async function startScan() {
+            const pathInput = document.getElementById('folderPath').value;
+            const statusMsg = document.getElementById('status-msg');
+            const listDiv = document.getElementById('results-list');
+
+            if(!pathInput) { alert("Please enter a path!"); return; }
+
+            statusMsg.innerText = "Scaning in progress...";
+            listDiv.innerHTML = "";
+            
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ folderPath: pathInput })
+                });
+
+                const result = await response.json();
+
+                if(!result.success) {
+                    statusMsg.innerText = "Error: " + result.error;
+                    return;
+                }
+
+                const data = result.data;
+
+                if(data.length === 0) {
+                    statusMsg.innerText = "GPS data not found";
+                    return;
+                }
+
+                statusMsg.innerText = "Found " + data.length + " evidence.";
+                
+                let latlngs = [];
+
+                data.forEach(item => {
+                    const marker = L.marker([item.lat, item.lon]).addTo(map);
+                    
+                    const popupContent = `
+                        <b>File:</b> ${item.name}<br>
+                        <b>Time:</b> ${item.time}<br>
+                        <b>Device:</b> ${item.camera}
+                    `;
+                    
+                    marker.bindPopup(popupContent);
+                    markers.push(marker);
+                    latlngs.push([item.lat, item.lon]);
+
+                    const div = document.createElement('div');
+                    div.className = 'evidence-item';
+                    div.innerHTML = `
+                        <span class="evidence-name">${item.name}</span>
+                        <div class="evidence-meta">📅 ${item.time}</div>
+                        <div class="evidence-meta">📱 ${item.camera}</div>
+                    `;
+                    div.onclick = () => {
+                        map.flyTo([item.lat, item.lon], 15);
+                        marker.openPopup();
+                    };
+                    listDiv.appendChild(div);
+                });
+
+                if (latlngs.length > 0) {
+                    const bounds = L.latLngBounds(latlngs);
+                    map.fitBounds(bounds);
+                    if (latlngs.length > 1) {
+                        L.polyline(latlngs, {color: '#e94560'}).addTo(map);
+                    }
+                }
+
+            } catch (e) {
+                console.error(e);
+                statusMsg.innerText = "There was an server error.";
+            }
+        }
+    </script>
+</body>
+</html>

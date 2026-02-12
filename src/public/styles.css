@@ -1,0 +1,125 @@
+/* public/styles.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: #16213e;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #0f3460;
+}
+
+h1 {
+    margin: 0;
+    color: #e94560;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: #888;
+}
+
+#controls {
+    padding: 20px;
+    background-color: #1f4068;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    background: #16213e;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+button {
+    padding: 12px 25px;
+    background-color: #e94560;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #c0354e;
+}
+
+#main-area {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+#sidebar {
+    width: 300px;
+    background-color: #16213e;
+    overflow-y: auto;
+    padding: 10px;
+    border-right: 1px solid #0f3460;
+}
+
+#sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+#sidebar::-webkit-scrollbar-track {
+    background: #16213e;
+}
+#sidebar::-webkit-scrollbar-thumb {
+    background: #0f3460;
+}
+
+#map {
+    flex: 1;
+    height: 100%;
+    z-index: 1;
+}
+
+.evidence-item {
+    background-color: #0f3460;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border-left: 4px solid #e94560;
+    transition: 0.2s;
+}
+
+.evidence-item:hover {
+    background-color: #1f4068;
+}
+
+.evidence-name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.evidence-meta {
+    font-size: 12px;
+    color: #aaa;
+}
