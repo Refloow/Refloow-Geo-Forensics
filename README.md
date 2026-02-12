@@ -2,8 +2,6 @@
 ❤️Free &amp; Open Source OSINT tool for image geolocation forensics. Batch process .jpg EXIF metadata, plot GPS coordinates on maps, and generate timeline reconstructions for digital investigations.
 
 FIRST RELEASE AND PRIJECT FILES WILL BE MADE AVAILABLE SOON
-<img width="614.4" height="409.6" alt="Refloow-Geo-Forensics" src="https://github.com/user-attachments/assets/b2c2d9a4-67cb-4338-af06-6251a26b0542" />
-
 
 <img width="2554" height="1350" alt="Screenshot 2026-02-12 103335" src="https://github.com/user-attachments/assets/709f0671-bfb6-43a7-80e1-d388a7750721" />
 <img width="2535" height="1093" alt="Screenshot 2026-02-12 104237" src="https://github.com/user-attachments/assets/475f791d-a343-4f04-9611-9b8d841824ee" />
