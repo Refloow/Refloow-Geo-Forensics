@@ -66,8 +66,7 @@ function createWindow() {
         width: 1280,
         height: 800,
         title: "Refloow GeoForensics",
-        // Ikona aplikacije (opciono, ako imas .ico ili .png)
-        // icon: path.join(__dirname, 'public/icon.png'), 
+        // Reminder add .ico for other distributions and other data in future version
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true
@@ -110,3 +109,4 @@ app.on('window-all-closed', function () {
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
  */
+
