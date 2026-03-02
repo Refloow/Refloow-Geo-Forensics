@@ -67,12 +67,31 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', apiRoutes);
 
-app.listen(PORT, () => {
-    console.log(`=========================================`);
-    console.log(`Refloow GeoForensics has started!`);
-    console.log(`Open in browser: http://localhost:${PORT}`);
-    console.log(`=========================================`);
-});
+// start the server dynamically
+function startServer(port = 3000) {
+    return new Promise((resolve, reject) => {
+        const server = app.listen(port, () => {
+            console.log(`=========================================`);
+            console.log(`Refloow GeoForensics has started!`);
+            console.log(`Open in browser: http://localhost:${port}`);
+            console.log(`=========================================`);
+            resolve(port); // Retrning suecessfull port
+        });
+
+        // Listen for errors (ports already in use)
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.log(`Port ${port} is in use, trying ${port + 1}...`);
+                // Waiting for the next port check to resolve and pass that port up
+                resolve(startServer(port + 1)); 
+            } else {
+                reject(err);
+            }
+        });
+    });
+}
+
+module.exports = { startServer };
 
 /* Refloow Geo Forensics
  * Copyright (C) 2026  Veljko Vuckovic (Refloow) <legal@refloow.com>
@@ -89,4 +108,5 @@ app.listen(PORT, () => {
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
  */
