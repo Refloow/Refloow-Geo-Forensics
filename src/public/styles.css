@@ -5,7 +5,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #1a1a2e;
-    color: #e0e0e0;
+    color: #000000;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -68,6 +68,7 @@ button:hover {
     background-color: #c0354e;
 }
 
+
 #map {
     background-color:#262626;
 }
@@ -126,5 +127,4 @@ button:hover {
 .evidence-meta {
     font-size: 12px;
     color: #aaa;
-
 }
