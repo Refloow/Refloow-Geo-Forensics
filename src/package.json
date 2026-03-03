@@ -28,7 +28,6 @@
     "appId": "com.refloow.geoforensics",
     "productName": "Refloow Geo Forensics",
     "copyright": "Copyright © Refloow",
-    "icon": "build/icon.ico",
     "asar": true,
     "directories": {
       "output": "release"
@@ -61,8 +60,14 @@
       "target": "dmg"
     },
     "linux": {
-      "icon": "build/icon.ico",
-      "target": "AppImage"
+      "icon": "build/Refloow-Geo-Forensics.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "maintainer": "Veljko Vuckovic <legal@refloow.com>",
+      "description": "Tool for geolocation of evidence."
     },
     "npmRebuild": false,
     "nsis": {
