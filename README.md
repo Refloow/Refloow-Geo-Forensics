@@ -3,7 +3,7 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2020.10.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-1.0.0-orange)](https://github.com/Refloow/Refloow-Geo-Forensics)
+[![Version](https://img.shields.io/badge/version-1.1.0-orange)](https://github.com/Refloow/Refloow-Geo-Forensics)
 [![Dark Web Informer](https://img.shields.io/badge/Featured_in-Dark_Web_Informer-CC0000?style=flat-square)](https://darkwebinformer.com/refloow-geo-forensics-a-free-batch-image-geolocation-and-exif-forensics-tool-for-osint/)
 
 **Refloow™ Geo Forensics** is a high-performance, open-source digital forensics tool designed for investigators, OSINT practitioners, and security analysts. It automates the extraction of EXIF metadata from batch image sets, visualizes geospatial data on interactive maps, and reconstructs chronological event timelines to uncover hidden connections in digital evidence.
