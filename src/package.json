@@ -56,7 +56,7 @@
       ]
     },
     "mac": {
-      "icon": "build/icon.ico",
+      "icon": "img/Refloow-Geo-Forensics.png",
       "target": "dmg"
     },
     "linux": {
