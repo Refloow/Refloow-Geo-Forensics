@@ -15,7 +15,7 @@
 > [!IMPORTANT]
 > Only official download place at the moment is releases tab of this repository: https://github.com/Refloow/Refloow-Geo-Forensics/releases
 > 
-> If you find this tool useful leave a ⭐ to support my work (its free) and helps other discover the software
+> If you find this tool useful leave a ⭐ to support my work (its free) and helps others discover the software
 
 ## 🚀 Key Features and Showcase
 
