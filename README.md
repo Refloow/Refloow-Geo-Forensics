@@ -114,3 +114,19 @@ This project is licensed under the **GNU Affero General Public License v3.0 (AGP
 > Refloow Geo Forensics: A Free Batch Image Geolocation and EXIF Forensics Tool for OSINT
 > 
 > — **[osintteam.blog curated list of tools](https://osintteam.blog/osint-related-articles-20260216-10fa2f9b4a31)** (Feb 2026)
+
+> 🔎 OSINT Tool: Refloow Geo Forensics: Extract Hidden Data from Images
+> 
+> — **[CyberSudo](https://www.youtube.com/post/Ugkx4Fi73qxY4QYuQoJE07ZXFs4nTmS-EQ1h)** (Mar 2026)
+
+> OSINTech's Timeline #157
+> 
+> — **[OSINTech](https://osintech.substack.com/p/osintechs-timeline-157-09042026)** (Apr 2026)
+
+> Refloow Geo Forensics: Free batch image geolocation and digital forensics tool
+> 
+> — **[EsGeeks](https://x.com/EsGeeks/status/2042762254660096432)** (Apr 2026)
+
+> Featured OSINT Tools
+> 
+> — **[The OSINT Vault](https://theosintvault.io/)** (Apr 2026)
