@@ -31,7 +31,7 @@
 ---
 
 <img width="2557" height="1342" alt="image" src="https://github.com/user-attachments/assets/44af4cb0-2d7f-477e-8213-3c4efafa3a7e" />
-<img width="2535" height="1093" alt="Screenshot 2026-02-12 104237" src="https://github.com/user-attachments/assets/475f791d-a343-4f04-9611-9b8d841824ee" />
+<img width="2557" height="1348" alt="image" src="https://github.com/user-attachments/assets/5fa524f3-7df9-4a7e-b37d-132af693eb0c" />
 <img width="2556" height="1338" alt="Screenshot 2026-02-12 104035" src="https://github.com/user-attachments/assets/7e63a22b-4159-4488-9c55-d2e38d52c900" />
 
 ## 💻 System Requirements & Technical Specs
