@@ -1,235 +1,303 @@
 <!DOCTYPE html>
 <html lang="sr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Refloow GeoForensics</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-<header>
-        <div>
-            <h1>Refloow GeoForensics</h1>
-            <span class="subtitle">TOOL FOR GEOLOCATION OF EVIDENCE</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <button id="supportBtn" class="support-btn">Support & Info</button>
-            <div style="font-size: 12px; color: #888;">Version 1.1.0</div>
-        </div>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Refloow GeoForensics</h1>
+        <span class="subtitle">TOOL FOR GEOLOCATION OF EVIDENCE</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <button id="settingsBtn" class="support-btn">Settings</button>
+        <button id="supportBtn" class="support-btn">Support & Info</button>
+        <div style="font-size: 12px; color: #888;">Version 1.1.0</div>
+      </div>
     </header>
 
     <div id="controls">
-        <input type="text" id="folderPath" placeholder="Enter full path to the folder with images (example: windows: C:\Users\User\Desktop\Images or linux: C:\Images)">
-        <button onclick="startScan()">Analyse</button>
+      <input type="text" id="folderPath" placeholder="Enter full path to the folder with images (example: windows: C:\Users\User\Desktop\Images or linux: C:\Images)" />
+      <button onclick="startScan()">Analyse</button>
     </div>
 
     <div id="main-area">
-        <div id="sidebar">
-            <div style="text-align: center; color: #888; margin-top: 20px;" id="status-msg">Waiting for scan...</div>
-            <div id="results-list"></div>
-        </div>
-        <div id="map"></div>
+      <div id="sidebar">
+        <div style="text-align: center; color: #888; margin-top: 20px;" id="status-msg">Waiting for scan...</div>
+        <div id="results-list"></div>
+      </div>
+      <div id="map"></div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    
+
     <script>
-        var map = L.map('map').setView([0, 0], 3);
-        map.attributionControl.setPrefix(false);
+      var map = L.map("map").setView([0, 0], 3);
+      map.attributionControl.setPrefix(false);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 20,
+      }).addTo(map);
 
-        let markers = [];
+      let markers = [];
 
-        async function startScan() {
-            const pathInput = document.getElementById('folderPath').value;
-            const statusMsg = document.getElementById('status-msg');
-            const listDiv = document.getElementById('results-list');
+      async function startScan() {
+        const pathInput = document.getElementById("folderPath").value;
+        const statusMsg = document.getElementById("status-msg");
+        const listDiv = document.getElementById("results-list");
 
-            if(!pathInput) { showCustomAlert("Please enter a path to your evidence folder.", "Input Required"); return; }
+        if (!pathInput) {
+          showCustomAlert("Please enter a path to your evidence folder.", "Input Required");
+          return;
+        }
 
-            statusMsg.innerText = "Scaning in progress...";
-            listDiv.innerHTML = "";
-            
-            markers.forEach(m => map.removeLayer(m));
-            markers = [];
+        statusMsg.innerText = "Scaning in progress...";
+        listDiv.innerHTML = "";
 
-            try {
-                const response = await fetch('/api/scan', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ folderPath: pathInput })
-                });
+        markers.forEach((m) => map.removeLayer(m));
+        markers = [];
 
-                const result = await response.json();
+        try {
+          const response = await fetch("/api/scan", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({folderPath: pathInput}),
+          });
 
-                if(!result.success) {
-                    statusMsg.innerText = "Scan failed.";
-                    showCustomAlert(result.error, "Scan Error");
-                    return;
-                }
+          const result = await response.json();
 
-                const data = result.data;
+          if (!result.success) {
+            statusMsg.innerText = "Scan failed.";
+            showCustomAlert(result.error, "Scan Error");
+            return;
+          }
 
-                if(data.length === 0) {
-                    statusMsg.innerText = "GPS data not found";
-                    return;
-                }
+          const data = result.data;
 
-                statusMsg.innerText = "Found " + data.length + " evidence.";
-                
-                let latlngs = [];
+          if (data.length === 0) {
+            statusMsg.innerText = "GPS data not found";
+            return;
+          }
 
-                data.forEach(item => {
-                    const marker = L.marker([item.lat, item.lon]).addTo(map);
-                    
-                    const popupContent = `
+          statusMsg.innerText = "Found " + data.length + " evidence.";
+
+          let latlngs = [];
+
+          data.forEach((item) => {
+            const marker = L.marker([item.lat, item.lon]).addTo(map);
+
+            const popupContent = `
                         <b>File:</b> ${item.name}<br>
                         <b>Time:</b> ${item.time}<br>
                         <b>Device:</b> ${item.camera}
                     `;
-                    
-                    marker.bindPopup(popupContent);
-                    markers.push(marker);
-                    latlngs.push([item.lat, item.lon]);
 
-                    const div = document.createElement('div');
-                    div.className = 'evidence-item';
-                    div.innerHTML = `
+            marker.bindPopup(popupContent);
+            markers.push(marker);
+            latlngs.push([item.lat, item.lon]);
+
+            const div = document.createElement("div");
+            div.className = "evidence-item";
+            div.innerHTML = `
                         <span class="evidence-name">${item.name}</span>
                         <div class="evidence-meta">📅 ${item.time}</div>
                         <div class="evidence-meta">📱 ${item.camera}</div>
                     `;
-                    div.onclick = () => {
-                        map.flyTo([item.lat, item.lon], 15);
-                        marker.openPopup();
-                    };
-                    listDiv.appendChild(div);
-                });
+            div.onclick = () => {
+              map.flyTo([item.lat, item.lon], 15);
+              marker.openPopup();
+            };
+            listDiv.appendChild(div);
+          });
 
-                if (latlngs.length > 0) {
-                    const bounds = L.latLngBounds(latlngs);
-                    map.fitBounds(bounds);
-                    if (latlngs.length > 1) {
-                        L.polyline(latlngs, {color: '#e94560'}).addTo(map);
-                    }
-                }
-
-            } catch (e) {
-                console.error(e);
-                statusMsg.innerText = "There was an server error.";
+          if (latlngs.length > 0) {
+            const bounds = L.latLngBounds(latlngs);
+            map.fitBounds(bounds);
+            if (latlngs.length > 1) {
+              L.polyline(latlngs, {color: "#e94560"}).addTo(map);
             }
+          }
+        } catch (e) {
+          console.error(e);
+          statusMsg.innerText = "There was an server error.";
         }
+      }
     </script>
 
-<div id="customAlertModal" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <h2 id="customAlertTitle" style="color: #e94560;">Alert</h2>
-            <p id="customAlertMessage" style="font-size: 1.1em; margin-bottom: 25px;">Message goes here</p>
-            <button id="customAlertBtn" class="support-btn" style="width: 100%;">OK</button>
-        </div>
-</div>
-
-
-<div id="supportModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Support & Information</h2>
-            
-            <div class="modal-section">
-                <h3>Official Links</h3>
-                <ul>
-                    <li><a href="https://refloow.com" target="_blank">Website (refloow.com)</a></li>
-                    <li><a href="https://discord.com/invite/D8WCtDD" target="_blank">Discord Support Server</a></li>
-                    <li><a href="https://linktr.ee/Refloow" target="_blank">Linktree (all socials)</a></li>
-                    <li><a href="https://github.com/Refloow/Refloow-Geo-Forensics" target="_blank">GitHub Repository (leaving a free ⭐ helps my work and others find the software)</a></li>
-                    <li><a href="https://github.com/Refloow/Refloow-Geo-Forensics/issues" target="_blank">Report an Issue</a></li>
-                    <li><a href="https://refloow.com/open-source-software/refloow-geo-forensics" target="_blank">Read more about refloow geo forensics</a></li>
-                </ul>
-            </div>
-
-
-            <div class="modal-section">
-                <h3>Refloow Provides Many Free Open Source Tools</h3>
-                <ul>
-                    <li><a href="https://refloow.com/open-source-software" target="_blank">Discover all software projects</a></li>
-                </ul>
-            </div>
-
-            <div class="modal-section">
-                <h3>Credits & Open Source</h3>
-                <p>This software utilizes the following open-source technologies:</p>
-                <ul>
-                    <li><a href="https://leafletjs.com/" target="_blank">Leaflet</a> - Interactive Maps</li>
-                    <li><a href="https://www.npmjs.com/package/exif-parser" target="_blank">exif-parser</a> - EXIF Data Extraction</li>
-                    <li><a href="https://expressjs.com/" target="_blank">Express.js</a> - Local API & Routing</li>
-                </ul>
-            </div>
-            
-            <div class="modal-footer">
-                &copy; 2026 Refloow.com &copy; Veljko Vuckovic
-            </div>
-        </div>
+    <div id="customAlertModal" class="modal">
+      <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <h2 id="customAlertTitle" style="color: #e94560;">Alert</h2>
+        <p id="customAlertMessage" style="font-size: 1.1em; margin-bottom: 25px;">Message goes here</p>
+        <button id="customAlertBtn" class="support-btn" style="width: 100%;">OK</button>
+      </div>
     </div>
 
-        <script>
-                // Modal
-  
-        const modal = document.getElementById("supportModal");
-        const supportBtn = document.getElementById("supportBtn");
-        const closeBtn = document.querySelector(".close-btn");
+    <div id="supportModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Support & Information</h2>
 
-        supportBtn.onclick = function() {
-            modal.style.display = "block";
+        <div class="modal-section">
+          <h3>Official Links</h3>
+          <ul>
+            <li><a href="https://refloow.com" target="_blank">Website (refloow.com)</a></li>
+            <li><a href="https://discord.com/invite/D8WCtDD" target="_blank">Discord Support Server</a></li>
+            <li><a href="https://linktr.ee/Refloow" target="_blank">Linktree (all socials)</a></li>
+            <li><a href="https://github.com/Refloow/Refloow-Geo-Forensics" target="_blank">GitHub Repository (leaving a free ⭐ helps my work and others find the software)</a></li>
+            <li><a href="https://github.com/Refloow/Refloow-Geo-Forensics/issues" target="_blank">Report an Issue</a></li>
+            <li><a href="https://refloow.com/open-source-software/refloow-geo-forensics" target="_blank">Read more about refloow geo forensics</a></li>
+          </ul>
+        </div>
+
+        <div class="modal-section">
+          <h3>Refloow Provides Many Free Open Source Tools</h3>
+          <ul>
+            <li><a href="https://refloow.com/open-source-software" target="_blank">Discover all software projects</a></li>
+          </ul>
+        </div>
+
+        <div class="modal-section">
+          <h3>Credits & Open Source</h3>
+          <p>This software utilizes the following open-source technologies:</p>
+          <ul>
+            <li><a href="https://leafletjs.com/" target="_blank">Leaflet</a> - Interactive Maps</li>
+            <li><a href="https://www.npmjs.com/package/exif-parser" target="_blank">exif-parser</a> - EXIF Data Extraction</li>
+            <li><a href="https://expressjs.com/" target="_blank">Express.js</a> - Local API & Routing</li>
+          </ul>
+        </div>
+
+        <div class="modal-footer">
+          &copy; 2026 Refloow.com &copy; Veljko Vuckovic
+        </div>
+      </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+      <div class="modal-content">
+        <span class="close-settings-btn close-btn">&times;</span>
+        <h2>Settings</h2>
+
+        <div class="modal-section">
+          <h3>Updates</h3>
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="autoUpdateToggle" style="width: 18px; height: 18px;" />
+            Enable Auto-Updates
+          </label>
+          <p style="font-size: 0.9em; color: #888; margin-top: 5px;">
+            Automatically check for new releases on GitHub and prompt before downloading.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Boot Loader
+      // --- Settings Modal & Logic ---
+      const settingsModal = document.getElementById("settingsModal");
+      const settingsBtn = document.getElementById("settingsBtn");
+      const closeSettingsBtn = document.querySelector(".close-settings-btn");
+      const autoUpdateToggle = document.getElementById("autoUpdateToggle");
+
+      settingsBtn.onclick = function () {
+        settingsModal.style.display = "block";
+      };
+
+      closeSettingsBtn.onclick = function () {
+        settingsModal.style.display = "none";
+      };
+
+      // Update the global window.onclick to handle both modals
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
         }
-
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
+        if (event.target == alertModal) {
+          alertModal.style.display = "none";
         }
-
-        
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+        if (event.target == settingsModal) {
+          settingsModal.style.display = "none";
         }
+      };
 
+      // Boot Loader for Settings
+      function loadUserSettings() {
+        // Check localStorage (default to true if not set)
+        const isAutoUpdateEnabled = localStorage.getItem("autoUpdate") !== "false";
+        autoUpdateToggle.checked = isAutoUpdateEnabled;
 
-
-        // --- Custom Alert Logic ---
-        const alertModal = document.getElementById("customAlertModal");
-        const alertMessageEl = document.getElementById("customAlertMessage");
-        const alertTitleEl = document.getElementById("customAlertTitle");
-        const alertBtn = document.getElementById("customAlertBtn");
-
-        // Function to call instead of standard alert()
-        function showCustomAlert(message, title = "Notice") {
-            alertTitleEl.innerText = title;
-            alertMessageEl.innerText = message;
-            alertModal.style.display = "block";
+        // Trigger update check on boot
+        if (window.electronAPI) {
+          window.electronAPI.triggerUpdateCheck(isAutoUpdateEnabled ? "true" : "false");
         }
+      }
 
-        // Close the alert when OK is clicked
-        alertBtn.onclick = function() {
-            alertModal.style.display = "none";
-        }
+      // Listen for user toggling the setting
+      autoUpdateToggle.addEventListener("change", (e) => {
+        const isChecked = e.target.checked;
+        localStorage.setItem("autoUpdate", isChecked ? "true" : "false");
 
-        // Update the window click event to handle closing both modals if clicked outside
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-            if (event.target == alertModal) {
-                alertModal.style.display = "none";
-            }
+        if (isChecked && window.electronAPI) {
+          window.electronAPI.triggerUpdateCheck("true");
         }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUserSettings();
+      });
+
+      // Modal
+
+      const modal = document.getElementById("supportModal");
+      const supportBtn = document.getElementById("supportBtn");
+      const closeBtn = document.querySelector(".close-btn");
+
+      supportBtn.onclick = function () {
+        modal.style.display = "block";
+      };
+
+      closeBtn.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      // --- Custom Alert Logic ---
+      const alertModal = document.getElementById("customAlertModal");
+      const alertMessageEl = document.getElementById("customAlertMessage");
+      const alertTitleEl = document.getElementById("customAlertTitle");
+      const alertBtn = document.getElementById("customAlertBtn");
+
+      // Function to call instead of standard alert()
+      function showCustomAlert(message, title = "Notice") {
+        alertTitleEl.innerText = title;
+        alertMessageEl.innerText = message;
+        alertModal.style.display = "block";
+      }
+
+      // Close the alert when OK is clicked
+      alertBtn.onclick = function () {
+        alertModal.style.display = "none";
+      };
+
+      // Update the window click event to handle closing both modals if clicked outside
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+        if (event.target == alertModal) {
+          alertModal.style.display = "none";
+        }
+      };
     </script>
-</body>
-
+  </body>
 </html>
