@@ -24,6 +24,8 @@
 * **Timeline Reconstruction:** Generate a chronological flow of events based on image timestamps to track movement or verify alibis.
 * **Privacy-First OSINT:** Run locally on your machine—no data is ever uploaded to external servers.
 * **Lightweight & Fast:** Optimized for rapid analysis without heavy resource consumption.
+* **Dark & Light mode:** Operate under any conditions, easilly toggle mode you chose via settings panel
+* **Image Preview:** Preview images in the sidebar or directly by clicking on the map (toggle on & off via settings panel)
 
 ---
 
