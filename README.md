@@ -29,10 +29,13 @@
 * **Multi system support:** Available on Windows, Linux & MacOS
 
 ---
-
-<img width="2557" height="1342" alt="image" src="https://github.com/user-attachments/assets/44af4cb0-2d7f-477e-8213-3c4efafa3a7e" />
+App UI - previews enabled - zoomed out
+<img width="2551" height="1341" alt="image" src="https://github.com/user-attachments/assets/25bc7656-8644-4917-adcc-ae92ce82e69d" />
+App UI - previews disabled (max performance) - zoomed in
 <img width="2557" height="1348" alt="image" src="https://github.com/user-attachments/assets/5fa524f3-7df9-4a7e-b37d-132af693eb0c" />
-<img width="2556" height="1338" alt="Screenshot 2026-02-12 104035" src="https://github.com/user-attachments/assets/7e63a22b-4159-4488-9c55-d2e38d52c900" />
+App UI - previews & light mode enabled
+<img width="2556" height="1352" alt="image" src="https://github.com/user-attachments/assets/201a197a-6f08-4ca4-ba5f-5168786eb509" />
+
 
 ## 💻 System Requirements & Technical Specs
 
