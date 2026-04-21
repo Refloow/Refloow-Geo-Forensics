@@ -26,6 +26,7 @@
 * **Lightweight & Fast:** Optimized for rapid analysis without heavy resource consumption.
 * **Dark & Light mode:** Operate under any conditions, easilly toggle mode you chose via settings panel
 * **Image Preview:** Preview images in the sidebar or directly by clicking on the map (toggle on & off via settings panel)
+* **Multi system support:** Available on Windows, Linux & MacOS
 
 ---
 
