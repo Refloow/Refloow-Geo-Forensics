@@ -235,3 +235,89 @@ button:hover {
     text-align: center;
     color: #666;
 }
+
+
+/* =========================================
+   LIGHT THEME OVERRIDES 
+   ========================================= */
+body.light-theme {
+    background-color: #f4f4f9;
+    color: #1a1a1a;
+}
+
+body.light-theme header {
+    background-color: #e0e0e0;
+    border-bottom: 3px solid #cccccc;
+}
+
+body.light-theme .subtitle {
+    color: #555;
+}
+
+body.light-theme #controls {
+    background-color: #d5d5d5;
+}
+
+body.light-theme input[type="text"] {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #aaa;
+}
+
+body.light-theme #sidebar {
+    background-color: #e0e0e0;
+    border-right: 1px solid #cccccc;
+}
+
+body.light-theme #sidebar::-webkit-scrollbar-track {
+    background: #e0e0e0;
+}
+
+body.light-theme #sidebar::-webkit-scrollbar-thumb {
+    background: #aaa;
+}
+
+body.light-theme #map {
+    background-color: #e5e3df; 
+}
+
+body.light-theme .evidence-item {
+    background-color: #ffffff;
+    border-left: 4px solid #e94560;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.light-theme .evidence-item:hover {
+    background-color: #f0f0f0;
+}
+
+body.light-theme .evidence-name {
+    color: #1a1a1a;
+}
+
+body.light-theme .evidence-meta {
+    color: #555;
+}
+
+/* Modal Light Theme */
+body.light-theme .modal-content {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    border: 2px solid #e94560;
+}
+
+body.light-theme .modal-section h3 {
+    border-bottom: 1px solid #ccc;
+}
+
+body.light-theme .modal-section p {
+    color: #444;
+}
+
+body.light-theme .close-btn {
+    color: #555;
+}
+
+body.light-theme .close-btn:hover {
+    color: #e94560;
+}
