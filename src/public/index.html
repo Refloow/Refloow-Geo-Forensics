@@ -348,18 +348,6 @@ var map = L.map("map", {
         settingsModal.style.display = "none";
       };
 
-      // Update the global window.onclick to handle both modals
-      window.onclick = function (event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-        if (event.target == alertModal) {
-          alertModal.style.display = "none";
-        }
-        if (event.target == settingsModal) {
-          settingsModal.style.display = "none";
-        }
-      };
 
       function applyTheme(isLight) {
         if (isLight) {
@@ -442,11 +430,6 @@ var map = L.map("map", {
         modal.style.display = "none";
       };
 
-      window.onclick = function (event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      };
 
       // --- Custom Alert Logic ---
       const alertModal = document.getElementById("customAlertModal");
@@ -466,13 +449,16 @@ var map = L.map("map", {
         alertModal.style.display = "none";
       };
 
-      // Update the window click event to handle closing both modals if clicked outside
+      // Unified global click handler for all modals
       window.onclick = function (event) {
         if (event.target == modal) {
           modal.style.display = "none";
         }
         if (event.target == alertModal) {
           alertModal.style.display = "none";
+        }
+        if (event.target == settingsModal) {
+          settingsModal.style.display = "none";
         }
       };
     </script>
