@@ -418,3 +418,64 @@ body.light-theme .zoom-sensitivity-control {
     border: 1px solid #cccccc;
     color: #1a1a1a;
 }
+
+
+/* =========================================
+   LEAFLET ZOOM CONTROLS THEMING
+   ========================================= */
+
+.leaflet-control-zoom.leaflet-bar {
+    border: 1px solid #0f3460 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4) !important;
+    overflow: hidden;
+}
+
+.leaflet-bar a {
+    background-color: #16213e !important;
+    color: #d0d0d0 !important;
+    border-bottom: 1px solid #0f3460 !important; 
+}
+
+.leaflet-bar a:last-child {
+    border-bottom: none !important;
+}
+
+.leaflet-bar a:hover {
+    background-color: rgba(233, 69, 96, 0.2) !important; 
+    color: #ffffff !important;
+}
+
+.leaflet-bar a.leaflet-disabled {
+    color: #555555 !important;
+    background-color: #111a30 !important; 
+    cursor: default !important;
+}
+
+/* =========================================
+   LIGHT THEME OVERRIDES (+/- BUTTONS)
+   ========================================= */
+
+body.light-theme .leaflet-control-zoom.leaflet-bar {
+    border: 1px solid #cccccc !important;
+}
+
+body.light-theme .leaflet-bar a {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    border-bottom: 1px solid #cccccc !important;
+}
+
+body.light-theme .leaflet-bar a:last-child {
+    border-bottom: none !important;
+}
+
+body.light-theme .leaflet-bar a:hover {
+    background-color: #f0f0f0 !important;
+    color: #000000 !important;
+}
+
+body.light-theme .leaflet-bar a.leaflet-disabled {
+    color: #bbbbbb !important;
+    background-color: #f9f9f9 !important;
+}
