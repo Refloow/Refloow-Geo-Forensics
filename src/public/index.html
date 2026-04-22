@@ -36,7 +36,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <script>
-      var map = L.map("map").setView([0, 0], 3);
+var map = L.map("map", {
+    zoomSnap: 0.1 
+}).setView([0, 0], 3);
       map.attributionControl.setPrefix(false);
 
       const cartoDark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
@@ -57,7 +59,7 @@
       });
 
       const topoMap = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)',
+        attribution: "Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)",
         maxZoom: 17,
       });
 
@@ -77,10 +79,10 @@
         "Satellite Imagery": esriSatellite,
         "Topographic Terrain": topoMap,
         "Humanitarian (Rural)": osmHumanitarian,
-        "Standard Street": osmStandard
+        "Standard Street": osmStandard,
       };
 
-      L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+      L.control.layers(baseMaps, null, {position: "topright"}).addTo(map);
 
       function setMapTheme(isLight) {
         // safely remove whatever layer is currently active
@@ -91,12 +93,32 @@
 
         // Then, apply the correct base theme from the settings toggle
         if (isLight) {
-            cartoLight.addTo(map);
+          cartoLight.addTo(map);
         } else {
-            cartoDark.addTo(map);
+          cartoDark.addTo(map);
         }
       }
-      
+
+      // --- Custom Precision Zoom Control ---
+      L.Control.ZoomMode = L.Control.extend({
+        options: {position: "bottomleft"}, 
+        onAdd: function (map) {
+          const container = L.DomUtil.create("div", "zoom-sensitivity-control");
+          container.innerHTML = `
+                  <input type="checkbox" id="mapPrecisionToggle" style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
+                  <label for="mapPrecisionToggle" style="cursor: pointer; font-weight: bold;">Precision Zoom</label>
+              `;
+
+          L.DomEvent.disableClickPropagation(container);
+          L.DomEvent.disableScrollPropagation(container);
+
+          return container;
+        },
+      });
+
+      // Add the new control to the map
+      map.addControl(new L.Control.ZoomMode());
+
       let markers = [];
 
       async function startScan() {
@@ -145,15 +167,15 @@
           const showPreviews = localStorage.getItem("imagePreviews") === "true";
 
           data.forEach((item) => {
-            let previewHtmlMap = '';
-            let previewHtmlSidebar = '';
-            
+            let previewHtmlMap = "";
+            let previewHtmlSidebar = "";
+
             // If enabled, point the image source to our new secure Express route
             if (showPreviews) {
-                const encodedPath = encodeURIComponent(item.fullPath);
-                const imgSrc = `/api/image?path=${encodedPath}`;
-                previewHtmlMap = `<img src="${imgSrc}" class="popup-thumbnail" alt="Preview">`;
-                previewHtmlSidebar = `<img src="${imgSrc}" class="evidence-thumbnail" alt="Preview">`;
+              const encodedPath = encodeURIComponent(item.fullPath);
+              const imgSrc = `/api/image?path=${encodedPath}`;
+              previewHtmlMap = `<img src="${imgSrc}" class="popup-thumbnail" alt="Preview">`;
+              previewHtmlSidebar = `<img src="${imgSrc}" class="evidence-thumbnail" alt="Preview">`;
             }
 
             const marker = L.marker([item.lat, item.lon]).addTo(map);
@@ -173,7 +195,7 @@
 
             const div = document.createElement("div");
             div.className = "evidence-item";
-            
+
             // Reorganized HTML to wrap text in .evidence-info and append the thumbnail
             div.innerHTML = `
                         <div class="evidence-info">
@@ -189,7 +211,6 @@
             };
             listDiv.appendChild(div);
           });
-
 
           if (latlngs.length > 0) {
             const bounds = L.latLngBounds(latlngs);
@@ -286,9 +307,7 @@
             <input type="checkbox" id="previewToggle" style="width: 18px; height: 18px;" />
             Enable Image Previews
           </label>
-          <p style="font-size: 0.9em; color: #888; margin-top: 5px;">
-            Displays thumbnails in the map and sidebar. <b>Note:</b> May throttle performance during large bulk operations.
-          </p>
+          <p style="font-size: 0.9em; color: #888; margin-top: 5px;">Displays thumbnails in the map and sidebar. <b>Note:</b> May throttle performance during large bulk operations.</p>
         </div>
       </div>
     </div>
@@ -302,6 +321,24 @@
       const autoUpdateToggle = document.getElementById("autoUpdateToggle");
       const themeToggle = document.getElementById("themeToggle");
       const previewToggle = document.getElementById("previewToggle");
+      const mapPrecisionToggle = document.getElementById("mapPrecisionToggle");
+
+
+      function applyZoomSettings(isPrecision) {
+        map.scrollWheelZoom.disable();
+
+        if (isPrecision) {
+          map.options.zoomSnap = 0.25;
+          map.options.zoomDelta = 0.25;
+          map.options.wheelPxPerZoomScroll = 120;
+        } else {
+          map.options.zoomSnap = 1;
+          map.options.zoomDelta = 1;
+          map.options.wheelPxPerZoomScroll = 60;
+        }
+
+        map.scrollWheelZoom.enable();
+      }
 
       settingsBtn.onclick = function () {
         settingsModal.style.display = "block";
@@ -326,9 +363,9 @@
 
       function applyTheme(isLight) {
         if (isLight) {
-            document.body.classList.add('light-theme');
+          document.body.classList.add("light-theme");
         } else {
-            document.body.classList.remove('light-theme');
+          document.body.classList.remove("light-theme");
         }
         setMapTheme(isLight);
       }
@@ -342,6 +379,12 @@
         const isPreviewEnabled = localStorage.getItem("imagePreviews") === "true";
         previewToggle.checked = isPreviewEnabled;
 
+        const savedPrecision = localStorage.getItem("precisionZoom") === "true";
+        if (mapPrecisionToggle) {
+          mapPrecisionToggle.checked = savedPrecision;
+        }
+        applyZoomSettings(savedPrecision);
+
         // Trigger update check on boot
         if (window.electronAPI) {
           window.electronAPI.triggerUpdateCheck(isAutoUpdateEnabled ? "true" : "false");
@@ -350,7 +393,6 @@
         const isLightMode = localStorage.getItem("lightMode") === "true";
         themeToggle.checked = isLightMode;
         applyTheme(isLightMode);
-        
       }
 
       themeToggle.addEventListener("change", (e) => {
@@ -364,6 +406,14 @@
         localStorage.setItem("imagePreviews", e.target.checked ? "true" : "false");
       });
 
+      if (mapPrecisionToggle) {
+        mapPrecisionToggle.addEventListener("change", (e) => {
+          const isPrecision = e.target.checked;
+          localStorage.setItem("precisionZoom", isPrecision ? "true" : "false");
+          applyZoomSettings(isPrecision);
+        });
+      }
+
       // Listen for user toggling the setting
       autoUpdateToggle.addEventListener("change", (e) => {
         const isChecked = e.target.checked;
@@ -373,8 +423,6 @@
           window.electronAPI.triggerUpdateCheck("true");
         }
       });
-
-      
 
       document.addEventListener("DOMContentLoaded", () => {
         loadUserSettings();
