@@ -38,19 +38,63 @@
     <script>
       var map = L.map("map").setView([0, 0], 3);
       map.attributionControl.setPrefix(false);
-      let currentTileLayer; // Store the active layer so we can remove it on swap
 
-      // Function to dynamically swap map tiles
+      const cartoDark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 20,
+      });
+
+      const cartoLight = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 20,
+      });
+
+      const esriSatellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        maxZoom: 19,
+      });
+
+      const topoMap = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)',
+        maxZoom: 17,
+      });
+
+      const osmHumanitarian = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France",
+        maxZoom: 19,
+      });
+
+      const osmStandard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19,
+      });
+
+      const baseMaps = {
+        "Forensic Dark": cartoDark,
+        "Forensic Light": cartoLight,
+        "Satellite Imagery": esriSatellite,
+        "Topographic Terrain": topoMap,
+        "Humanitarian (Rural)": osmHumanitarian,
+        "Standard Street": osmStandard
+      };
+
+      L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
       function setMapTheme(isLight) {
-        if (currentTileLayer) {
-            map.removeLayer(currentTileLayer);
+        // safely remove whatever layer is currently active
+        if (map.hasLayer(cartoDark)) map.removeLayer(cartoDark);
+        if (map.hasLayer(cartoLight)) map.removeLayer(cartoLight);
+        if (map.hasLayer(esriSatellite)) map.removeLayer(esriSatellite);
+        if (map.hasLayer(topoMap)) map.removeLayer(topoMap);
+
+        // Then, apply the correct base theme from the settings toggle
+        if (isLight) {
+            cartoLight.addTo(map);
+        } else {
+            cartoDark.addTo(map);
         }
-        const themeStr = isLight ? 'light_all' : 'dark_all';
-        currentTileLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${themeStr}/{z}/{x}/{y}{r}.png`, {
-            attribution: "&copy; OpenStreetMap &copy; CARTO",
-            subdomains: "abcd",
-            maxZoom: 20,
-        }).addTo(map);
       }
       
       let markers = [];
@@ -97,7 +141,7 @@
 
           let latlngs = [];
 
-// Check if user wants images loaded
+          // Check if user wants images loaded
           const showPreviews = localStorage.getItem("imagePreviews") === "true";
 
           data.forEach((item) => {
