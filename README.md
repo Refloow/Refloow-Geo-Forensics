@@ -20,7 +20,7 @@
 ## 🚀 Key Features and Showcase
 
 * **Batch EXIF Extraction:** Process hundreds of `.jpg` or `.jpeg` files simultaneously to pull deep metadata.
-* **Geospatial Visualization:** Automatically plot GPS coordinates onto interactive maps for immediate situational awareness.
+* **Geospatial Visualization:** Automatically plot GPS coordinates onto interactive maps for immediate situational awareness. Variety of mapping layers are available: (Forensic Dark, Forensic Light, Satelite Imagery, Topographic Terrain, Humanitarian (Rural) & Standard Street).
 * **Timeline Reconstruction:** Generate a chronological flow of events based on image timestamps to track movement or verify alibis.
 * **Privacy-First OSINT:** Run locally on your machine—no data is ever uploaded to external servers.
 * **Lightweight & Fast:** Optimized for rapid analysis without heavy resource consumption.
