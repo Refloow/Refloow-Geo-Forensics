@@ -155,9 +155,9 @@ button:hover {
     position: fixed; 
     z-index: 9999; 
     left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
+    top: 35px; 
+    height: calc(100% - 35px);
+    width: 100%;  
     background-color: rgba(0, 0, 0, 0.75); 
     backdrop-filter: blur(3px); 
 }
@@ -511,4 +511,137 @@ body.light-theme .leaflet-control-attribution a {
 
 body.light-theme .leaflet-control-attribution a:hover {
     color: #e94560 !important;
+}
+
+/* =========================================
+   CUSTOM TITLE BAR
+   ========================================= */
+#custom-title-bar {
+    display: flex;
+    align-items: center;
+    background-color: #181818;
+    height: 35px;
+    user-select: none;
+    -webkit-app-region: drag;
+}
+
+.title-buttons {
+    display: flex;
+    align-items: center;
+    -webkit-app-region: no-drag; 
+    padding-left: 10px;
+    height: 100%;
+    gap: 1px;
+}
+
+.title-icon {
+    width: 18px; 
+    height: 18px;
+    margin-right: 2px;
+    -webkit-user-drag: none; 
+}
+
+.title-drag-area {
+    flex-grow: 1; 
+    height: 100%;
+    -webkit-app-region: drag; 
+}
+
+.title-btn {
+    background: transparent !important;
+    border: none;
+    color: #a0a0a0; 
+    cursor: pointer;
+    font-size: 12px; 
+    font-weight: bold;
+    padding: 6px 10px; 
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.title-btn:hover {
+    color: #ffffff;
+    background-color: rgba(233, 69, 96, 0.2);
+}
+
+/* Push buttons out of the way of macOS traffic lights */
+body.os-darwin .title-buttons {
+    padding-left: 70px; 
+}
+
+/* =========================================
+   DONATION MODAL THEMING
+   ========================================= */
+.crypto-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.crypto-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #e94560;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.crypto-input {
+    width: 100%;
+    padding: 10px 15px; 
+    background-color: #111a30;
+    border: 1px solid #0f3460;
+    color: #d0d0d0;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left; 
+}
+
+.crypto-input:focus {
+    outline: none;
+    border-color: #e94560;
+    background-color: #16213e;
+}
+
+/* Light Theme Overrides for Donations */
+body.light-theme .crypto-input {
+    background-color: #f9f9f9;
+    border: 1px solid #cccccc;
+    color: #1a1a1a;
+}
+
+body.light-theme .crypto-input:focus {
+    background-color: #ffffff;
+    border-color: #e94560;
+}
+
+/* =========================================
+   TOAST NOTIFICATION
+   ========================================= */
+#toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #058552; 
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 10000; 
+    pointer-events: none; 
+    
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }
