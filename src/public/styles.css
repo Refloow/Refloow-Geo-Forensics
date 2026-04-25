@@ -641,6 +641,12 @@ body.light-theme .crypto-input:focus {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+.toast-error {
+    background-color: #e94560 !important;
+    border-color: #ff5773 !important; 
+    color: #ffffff !important;
+}
+
 #toast.show {
     opacity: 1;
     transform: translateY(0);
