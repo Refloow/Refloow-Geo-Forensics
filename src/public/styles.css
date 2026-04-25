@@ -688,3 +688,21 @@ body.light-theme .crypto-input:focus {
     background-color: #ff5773; 
     box-shadow: 0 0 8px rgba(233, 69, 96, 0.4); 
 }
+
+/* =========================================
+   LIGHT THEME OVERRIDES FOR BUTTONS
+   ========================================= */
+.light-theme .browse-btn {
+    background-color: #e2e8f0; 
+    color: #1e293b; 
+    border: 1px solid #cbd5e1;
+}
+
+.light-theme .browse-btn:hover {
+    background-color: #cbd5e1; 
+    color: #0f172a;
+}
+
+.light-theme .analyse-btn:hover {
+    box-shadow: 0 0 8px rgba(233, 69, 96, 0.6); 
+}
