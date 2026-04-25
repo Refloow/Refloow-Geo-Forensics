@@ -31,9 +31,11 @@
       </div>
     </header>
 
-    <div id="controls">
-      <input type="text" id="folderPath" placeholder="Enter full path to the folder with images (example: windows: C:\Users\User\Desktop\Images or linux: C:\Images)" />
-      <button onclick="startScan()">Analyse</button>
+<div id="controls" style="display: flex; gap: 10px; align-items: center;">
+      <input type="text" id="folderPath" style="flex-grow: 1;" placeholder="Enter full path to the folder with images (example: windows: C:\Users\User\Desktop\Images or linux: C:\Images)" />
+      
+      <button id="browseBtn" class="browse-btn" onclick="browseFolder()">Browse Folder</button>
+      <button id="analyseBtn" class="analyse-btn" onclick="startScan()">Analyze</button>
     </div>
 
     <div id="main-area">
@@ -589,6 +591,22 @@ var map = L.map("map", {
           donationModal.style.display = "none";
         }
       };
+
+
+      // --- Native Folder Browser Logic ---
+      async function browseFolder() {
+        if (window.electronAPI && window.electronAPI.selectFolder) {
+          const selectedPath = await window.electronAPI.selectFolder();
+          
+          // If the user picked a folder (and didn't hit cancel), update the input field
+          if (selectedPath) {
+            document.getElementById("folderPath").value = selectedPath;
+          }
+        } else {
+          // Fallback in case they are running it in a raw browser instead of Electron
+          showCustomAlert("Native folder selection is only available in the desktop application.", "Notice");
+        }
+      }
     </script>
   </body>
 </html>
