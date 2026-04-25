@@ -171,10 +171,14 @@ var map = L.map("map", {
 
           if (data.length === 0) {
             statusMsg.innerText = "GPS data not found";
+            // Trigger the RED toast for 2.5 seconds
+            showToast("Scan complete: No GPS data found in this directory.", true);
             return;
           }
 
           statusMsg.innerText = "Found " + data.length + " evidence.";
+          // Trigger the GREEN toast for 2.5 seconds
+          showToast(`Success: ${data.length} evidence files located!`, false);
 
           let latlngs = [];
 
@@ -257,9 +261,17 @@ var map = L.map("map", {
         });
       }
 
-      function showToast(message) {
+      function showToast(message, isError = false) {
         const toast = document.getElementById("toast");
         toast.innerText = message;
+        
+        // Toggle the red error class based on the outcome
+        if (isError) {
+            toast.classList.add("toast-error");
+        } else {
+            toast.classList.remove("toast-error");
+        }
+
         toast.classList.add("show");
 
         // Clear any existing timeout so rapid clicks don't glitch the animation
