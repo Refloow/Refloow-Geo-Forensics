@@ -26,7 +26,7 @@ Don't worry—you still own your ideas. By signing the agreement, Refloow grants
 
 To get the project running locally on your machine for development:
 
-1. **Prerequisites:** Ensure you have [Node.js](https://nodejs.org/) installed. Ofiical development version is v20.10.0
+1. **Prerequisites:** Ensure you have [Node.js](https://nodejs.org/) installed. Official development version is v20.10.0
 2. **Clone your fork:** `git clone https://github.com/Refloow/Refloow-Geo-Forensics.git`
 3. **Navigate to the directory:** `cd Refloow-Geo-Forensics/src`
 4. **Install dependencies:** `npm install`
