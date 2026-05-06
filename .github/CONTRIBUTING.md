@@ -16,7 +16,7 @@ By submitting a Pull Request, you agree to transfer the copyright of your contri
 **The License Back:**
 Don't worry—you still own your ideas. By signing the agreement, Refloow grants you a non-exclusive, perpetual license back to your own code. You are free to use, modify, and distribute the code you wrote however you see fit.
 
-🔗 **[Read the full Contributor License Agreement (CLA) here](https://gist.github.com/YOUR-GITHUB-USERNAME/YOUR-GIST-ID)**
+🔗 **[Read the full Contributor License Agreement (CLA) here](https://gist.github.com/Refloow/5ad996a927f8dda94911b29c84bb51e1)**
 
 *Note: You do not need to sign anything manually. Upon opening your first Pull Request, an automated bot (CLA Assistant) will prompt you to review and sign the agreement directly via your GitHub account.*
 
@@ -27,7 +27,7 @@ Don't worry—you still own your ideas. By signing the agreement, Refloow grants
 To get the project running locally on your machine for development:
 
 1. **Prerequisites:** Ensure you have [Node.js](https://nodejs.org/) installed.
-2. **Clone your fork:** `git clone https://github.com/YOUR-USERNAME/Refloow-Geo-Forensics.git`
+2. **Clone your fork:** `git clone https://github.com/Refloow/Refloow-Geo-Forensics.git`
 3. **Navigate to the directory:** `cd Refloow-Geo-Forensics/src`
 4. **Install dependencies:** `npm install`
 5. **Run the application:** `npm start`
@@ -53,20 +53,20 @@ Ready to write some code? Follow this standard GitHub flow:
 2. **Create a new branch**  
    Create a feature branch from `main` for your work:
 
-    git checkout -b feature/your-amazing-feature
+    ```git checkout -b feature/your-amazing-feature```
 
    Use `bugfix/` or `docs/` prefixes if applicable.
 
 3. **Make changes and commit**  
    Stage and commit your changes with a clear, descriptive message:
 
-    git add .
-    git commit -m "Add support for analyzing .CR3 RAW image formats"
+    ```git add .```
+    ```git commit -m "Add support for analyzing .CR3 RAW image formats"```
 
 4. **Push your branch**  
    Push the branch to your fork:
-
-    git push origin feature/your-amazing-feature
+`
+    ```git push origin feature/your-amazing-feature```
 
 5. **Open a Pull Request**  
    Open a Pull Request against the `main` branch of the official Refloow Geo Forensics repository. In your PR description include:
