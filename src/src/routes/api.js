@@ -61,13 +61,13 @@ const router = express.Router();
 const { scanDirectory } = require('../utils/scanner');
 
 
-router.post('/scan', (req, res) => {
+router.post('/scan', async (req, res) => { 
     const { folderPath } = req.body;
     
     console.log(`[ANALYZE] Request for folder: ${folderPath}`);
 
     try {
-        const data = scanDirectory(folderPath);
+        const data = await scanDirectory(folderPath); 
         res.json({ success: true, data: data });
     } catch (error) {
         console.error("Error:", error.message);
