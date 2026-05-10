@@ -58,49 +58,58 @@ const REFLOOW_BRAND_IDENTITY = {
 
 const fs = require('fs');
 const path = require('path');
-const exifParser = require('exif-parser');
+const { exiftool } = require('exiftool-vendored');
 
-function formatTime(timestamp) {
-    if (!timestamp) return 'Unknown time';
-    return new Date(timestamp * 1000).toLocaleString('sr-RS');
-}
-
-function scanDirectory(dirPath) {
+async function scanDirectory(dirPath) {
     let results = [];
 
     // Normalize the path for the current OS (Linux/Windows)
     const normalizedPath = path.resolve(dirPath.trim());
     
-if (!fs.existsSync(normalizedPath)) {
+    if (!fs.existsSync(normalizedPath)) {
         throw new Error("Folder doesnt exist or path is not valid");
     }
 
-    const files = fs.readdirSync(normalizedPath);
+    // Read directory asynchronously
+    const files = await fs.promises.readdir(normalizedPath);
 
-    files.forEach(file => {
+    // Use a for...of loop to process files without spiking RAM
+    for (const file of files) {
         const fullPath = path.join(normalizedPath, file);
         
-        if (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')) {
-            try {
-                const buffer = fs.readFileSync(fullPath);
-                const parser = exifParser.create(buffer);
-                const result = parser.parse();
+        try {
+            // Skip folders, process files only
+            const stat = await fs.promises.stat(fullPath);
+            if (!stat.isFile()) continue;
 
-                if (result.tags && result.tags.GPSLatitude && result.tags.GPSLongitude) {
-                    results.push({
-                        name: file,
-                        fullPath: fullPath,
-                        lat: result.tags.GPSLatitude,
-                        lon: result.tags.GPSLongitude,
-                        time: formatTime(result.tags.DateTimeOriginal),
-                        camera: result.tags.Model || "Unknown device"
-                    });
+            // Let ExifTool read the file (works for JPG, CR3, MP4, MOV, HEIC, etc.)
+            const tags = await exiftool.read(fullPath);
+
+            // Check if GPS data exists
+            if (tags.GPSLatitude && tags.GPSLongitude) {
+                
+                // Format the Time natively
+                let formattedTime = "Unknown Time";
+                const rawDate = tags.DateTimeOriginal || tags.CreateDate || tags.ModifyDate;
+                
+                if (rawDate) {
+                    formattedTime = rawDate.rawValue || rawDate.toString(); 
                 }
-            } catch (err) {
 
+                // Push to array
+                results.push({
+                    name: file,
+                    fullPath: fullPath,
+                    lat: tags.GPSLatitude,
+                    lon: tags.GPSLongitude,
+                    time: formattedTime,
+                    camera: tags.Model || tags.Make || "Unknown device"
+                });
             }
+        } catch (err) {
+            // Silently skip unreadable or non-media files
         }
-    });
+    }
 
     return results;
 }
