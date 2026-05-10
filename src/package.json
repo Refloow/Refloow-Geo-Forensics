@@ -3,12 +3,12 @@
   "version": "1.2.1",
   "description": "Application which allows to tag photos to their geologactions using forensics methods of reading metadata and eexif data of photos.",
   "main": "main.js",
-"scripts": {
-  "start": "electron .",
-  "server": "node src/server.js",
-  "package": "electron-builder --win --publish never",
-  "package:mac": "electron-builder --mac --publish never",
-  "package:linux": "electron-builder --linux --publish never"
+  "scripts": {
+    "start": "electron .",
+    "server": "node src/server.js",
+    "package": "electron-builder --win --publish never",
+    "package:mac": "electron-builder --mac --publish never",
+    "package:linux": "electron-builder --linux --publish never"
   },
   "author": "Veljko Vuckovic",
   "license": "AGPL-3.0",
@@ -19,6 +19,7 @@
   "dependencies": {
     "electron-updater": "^6.8.3",
     "exif-parser": "^0.1.12",
+    "exiftool-vendored": "^35.20.0",
     "express": "^5.2.1"
   },
   "devDependencies": {
@@ -30,6 +31,11 @@
     "productName": "Refloow Geo Forensics",
     "copyright": "Copyright © Refloow",
     "asar": true,
+    "asarUnpack": [
+      "node_modules/exiftool-vendored/**",
+      "node_modules/exiftool-vendored.exe/**",
+      "node_modules/exiftool-vendored.pl/**"
+    ],
     "directories": {
       "output": "release"
     },
