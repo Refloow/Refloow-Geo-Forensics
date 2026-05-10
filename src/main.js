@@ -59,6 +59,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const { startServer } = require('./src/server.js');
+const { exiftool } = require('exiftool-vendored');
 
 // Prevent automatic downloads
 autoUpdater.autoDownload = false
@@ -223,6 +224,16 @@ app.whenReady().then(async () => {
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit();
+});
+
+// THE KILL SWITCH: Before the app fully quits, safely terminate the ExifTool background process
+app.on('before-quit', async () => {
+    try {
+        await exiftool.end();
+        console.log("ExifTool background process terminated securely.");
+    } catch (err) {
+        console.error("Error shutting down ExifTool:", err);
+    }
 });
 
 /* Refloow Geo Forensics
