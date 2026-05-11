@@ -176,3 +176,7 @@ Refloow Geo Forensics is completely free, open-source. If this tool has saved yo
 > Featured OSINT Tools
 > 
 > — **[The OSINT Vault](https://theosintvault.io/)** (Apr 2026)
+
+> OSINT Tools directory feature
+>
+> — **[osintrack.com](https://osintrack.com/)** (May 2026)
