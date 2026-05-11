@@ -136,8 +136,15 @@
 
       let markers = [];
       let polylineLayer = null;
+      let isScanning = false;
 
       async function startScan() {
+        if (isScanning) return; // Ignore clicks if already scanning
+        isScanning = true;
+
+        const analyseBtn = document.getElementById("analyseBtn");
+
+        try {
         const pathInput = document.getElementById("folderPath").value;
         const statusMsg = document.getElementById("status-msg");
         const listDiv = document.getElementById("results-list");
@@ -146,6 +153,10 @@
           showCustomAlert("Please enter a path to your evidence folder.", "Input Required");
           return;
         }
+
+        analyseBtn.innerText = "Scanning...";
+        analyseBtn.style.opacity = "0.7";
+        analyseBtn.style.cursor = "wait";
 
         statusMsg.innerText = "Scaning in progress...";
         listDiv.innerHTML = "";
@@ -158,7 +169,7 @@
           polylineLayer = null;
         }
 
-        try {
+
           const response = await fetch("/api/scan", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -174,6 +185,8 @@
           }
 
           let data = result.data;
+
+          listDiv.innerHTML = "";
 
           if (data.length === 0) {
             statusMsg.innerText = "GPS data not found";
@@ -270,6 +283,12 @@
         } catch (e) {
           console.error(e);
           statusMsg.innerText = "There was an server error.";
+        } finally {
+          // Unlock UI absolutely no matter what happens (success or error)
+          isScanning = false;
+          analyseBtn.innerText = "Analyze";
+          analyseBtn.style.opacity = "1";
+          analyseBtn.style.cursor = "pointer";
         }
       }
 
