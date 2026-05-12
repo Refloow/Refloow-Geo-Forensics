@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "electron-updater": "^6.8.3",
-    "exif-parser": "^0.1.12",
     "exiftool-vendored": "^35.20.0",
     "express": "^5.2.1"
   },
@@ -64,7 +63,10 @@
     },
     "mac": {
       "icon": "img/iconMAC.png",
-      "target": ["dmg", "zip"]
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "linux": {
       "icon": "build/Refloow-Geo-Forensics.png",
