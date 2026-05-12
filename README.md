@@ -64,9 +64,20 @@ To ensure stable performance during batch processing, the following specificatio
 2.  **Analyze:** The tool will automatically parse EXIF headers for GPS, camera model, and timestamps.
 3.  **Visualize:** Switch to the Map View to see geographical clusters of where photos were taken.
 
-## 📜 License
+## 📜 License (community edition)
 
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. This ensures that the tool remains open-source and that any improvements made by the community are shared back with the public.
+This project (community edition) is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. This ensures that the tool remains open-source and that any improvements made by the community are shared back with the public.
+This version is made available for individuals, students, researchers, and everyone interested in geo forensics under restrictions of GNU Affero General Public License v3.0 (AGPL-3.0) license
+
+## 📜 License (Commercial) - For Institutions
+
+**Enterprise License** exists with Proprietary licensing for government, enterprise, and closed-source commercial deployment is available providing:
+1. AGPL Exemption: Edit, modify, and deploy without sharing your changes.
+2. Keep your intellectual property closed
+3. Internal network deployment rights
+4. Priority dedicated technical support
+   
+To obtain this enterprise license inquire using available contact options for further details and contract:
 
 ---
 
@@ -77,6 +88,7 @@ This project is licensed under the **GNU Affero General Public License v3.0 (AGP
 * **All social links:** [linktree](https://linktr.ee/Refloow)
 * **Official community telegram:** [link](https://t.me/+LC9l6d-Jhco2NTU0)
 * **Official community discord:** [link](https://discord.com/invite/D8WCtDD)
+* refloowbusiness@gmail.com
 ---
 
 ## ☕ Support the Project
