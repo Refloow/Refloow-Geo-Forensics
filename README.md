@@ -48,7 +48,7 @@ To ensure stable performance during batch processing, the following specificatio
 * **Operating System:** Windows 10/11, macOS (Intel/Apple Silicon), or Linux (Ubuntu/Debian recommended).
 * **Runtime:** Node.js **v20.10.0** or higher.
 * **Framework:** Built with Electron for cross-platform desktop compatibility.
-* **Primary Libraries:** `express`, `exif-parser` & `electron`.
+* **Primary Libraries:** `express`, `exiftool-vendored` & `electron`.
 
 ### **Hardware Requirements**
 | Component | Minimum | Recommended |
