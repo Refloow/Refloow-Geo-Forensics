@@ -27,6 +27,7 @@
 * **Dark & Light mode:** Operate under any conditions, easilly toggle mode you chose via settings panel
 * **Image Preview:** Preview images in the sidebar or directly by clicking on the map (toggle on & off via settings panel)
 * **Multi system support:** Available on Windows, Linux & MacOS
+* **Utilizes industry standard [ExifTool](https://exiftool.org/) by Phil Harvey** - as a exif data extraction engine, via node.js exiftool-vendored approach, supporting every image, video or filetype ever available!
 
 <img src="https://github.com/user-attachments/assets/d6d5fc02-8327-4804-8abb-1e82ba206837" alt="Previews enabled satellite map layer" />
 
