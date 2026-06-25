@@ -194,14 +194,6 @@ Refloow Geo Forensics is completely free, open-source. If this tool has saved yo
 >
 > — **[osintrack.com](https://osintrack.com/)** (May 2026)
 
-> "This isn't hobbyist software. This is production-grade forensics infrastructure that happens to be completely free."
-> 
-> "This isn't just another metadata tool. It's the secret weapon that top OSINT practitioners are quietly adopting while everyone else still struggles with manual workflows."
-> 
-> "Refloow Geo Forensics eliminates the mechanical drudgery that kills investigative momentum."
-> 
-> — **[Bright Coding](https://www.blog.brightcoding.dev/2026/06/25/stop-manually-hunting-exif-data-refloow-geo-forensics-does-it-in-seconds)** (Jun 2026)
-
 > Stop Manually Hunting EXIF Data! Refloow Geo Forensics Does It in Seconds
 >
 > "This isn't hobbyist software. This is production-grade forensics infrastructure that happens to be completely free."
@@ -213,3 +205,4 @@ Refloow Geo Forensics is completely free, open-source. If this tool has saved yo
 > "This isn't just convenient—it's legally defensible. When you need to establish movement patterns, verify alibis, or identify chronological inconsistencies in testimony, automated timeline generation eliminates human transcription errors."
 > 
 > — **[Bright Coding](https://www.blog.brightcoding.dev/2026/06/25/stop-manually-hunting-exif-data-refloow-geo-forensics-does-it-in-seconds)** (Jun 2026)
+
