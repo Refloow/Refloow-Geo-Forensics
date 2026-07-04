@@ -770,3 +770,68 @@ body.light-theme .crypto-input:focus {
     padding: clamp(6px, 1.2vh, 10px) 15px; 
     font-size: clamp(11px, 1.5vh, 13px);
 }
+
+
+/* =========================================
+   RETRACTABLE SIDEBAR
+   ========================================= */
+
+#sidebar {
+    transition: width 0.3s ease, padding 0.3s ease, border 0.3s ease;
+    overflow-x: hidden; 
+}
+
+#sidebar.collapsed {
+    width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    border-right: none !important;
+}
+
+#toggleSidebarBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 321px; 
+    z-index: 1000;
+    background-color: #16213e;
+    color: #d0d0d0;
+    border: 1px solid #0f3460;
+    border-left: none;
+    padding: 20px 6px;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: left 0.3s ease, background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.4);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#toggleSidebarBtn:hover {
+    background-color: #e94560;
+    color: #ffffff;
+}
+
+#sidebar.collapsed ~ #toggleSidebarBtn {
+    left: 0;
+    border-left: 1px solid #0f3460; 
+}
+
+body.light-theme #toggleSidebarBtn {
+    background-color: #e0e0e0;
+    color: #1a1a1a;
+    border-color: #cccccc;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+body.light-theme #toggleSidebarBtn:hover {
+    background-color: #e94560;
+    color: #ffffff;
+    border-color: #e94560;
+}
+
+body.light-theme #sidebar.collapsed ~ #toggleSidebarBtn {
+    border-left: 1px solid #cccccc;
+}
