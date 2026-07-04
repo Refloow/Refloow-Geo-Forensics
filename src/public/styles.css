@@ -155,23 +155,25 @@ button:hover {
     position: fixed; 
     z-index: 9999; 
     left: 0;
-    top: 35px; 
+    top: 35px;
     height: calc(100% - 35px);
     width: 100%;  
     background-color: rgba(0, 0, 0, 0.75); 
     backdrop-filter: blur(3px); 
+    overflow: hidden;
 }
 
 .modal-content {
     background-color: #1a1a24;
-    margin: 8% auto; 
-    padding: 30px;
+    margin: clamp(2vh, 8vh, 8%) auto; 
+    padding: clamp(15px, 3vh, 30px);
     border: 2px solid #e94560;
     border-radius: 8px;
     width: 80%;
     max-width: 500px;
     color: #fff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 }
 
 .close-btn {
@@ -731,4 +733,40 @@ body.light-theme .crypto-input:focus {
 
 .light-theme .timeline-number-tooltip {
     border-color: #ffffff;
+}
+
+/* =========================================
+    SCALING DONATION MODAL
+   ========================================= */
+
+#donationModal .modal-content {
+    max-width: 950px !important; 
+}
+
+#donationModal h2 {
+    margin-bottom: clamp(5px, 2vh, 10px) !important;
+    font-size: clamp(18px, 3vh, 24px);
+}
+
+#donationModal p {
+    margin-bottom: clamp(10px, 3vh, 25px) !important;
+    font-size: clamp(12px, 1.8vh, 15px) !important;
+}
+
+#donationModal .crypto-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: clamp(3px, 1.8vh, 15px);
+}
+
+#donationModal .crypto-label {
+    font-size: clamp(11px, 1.5vh, 13px);
+    margin-bottom: clamp(2px, 0.5vh, 5px);
+}
+
+#donationModal .crypto-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: clamp(6px, 1.2vh, 10px) 15px; 
+    font-size: clamp(11px, 1.5vh, 13px);
 }
