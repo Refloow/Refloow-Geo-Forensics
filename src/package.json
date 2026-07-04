@@ -17,13 +17,13 @@
     "url": "git+https://github.com/Refloow/Refloow-Geo-Forensics.git"
   },
   "dependencies": {
-    "electron-updater": "^6.8.3",
-    "exiftool-vendored": "^35.20.0",
-    "express": "^5.2.1"
+    "electron-updater": "6.8.3",
+    "exiftool-vendored": "35.20.0",
+    "express": "5.2.1"
   },
   "devDependencies": {
-    "electron": "^40.4.0",
-    "electron-builder": "^26.7.0"
+    "electron": "40.4.0",
+    "electron-builder": "26.7.0"
   },
   "build": {
     "appId": "com.refloow.geoforensics",
