@@ -38,11 +38,14 @@
       <button id="analyseBtn" class="analyse-btn" onclick="startScan()">Analyze</button>
     </div>
 
-    <div id="main-area">
+<div id="main-area" style="position: relative;">
       <div id="sidebar">
         <div style="text-align: center; color: #888; margin-top: 5px; margin-bottom: 15px;" id="status-msg">Waiting for scan...</div>
         <div id="results-list"></div>
       </div>
+      
+      <button id="toggleSidebarBtn" title="Toggle Sidebar">◀</button>
+      
       <div id="map"></div>
     </div>
 
@@ -516,6 +519,25 @@
       const donationModal = document.getElementById("donationModal");
       const donationBtn = document.getElementById("donationBtn");
       const closeDonationBtn = document.querySelector(".close-donation-btn");
+
+      const sidebar = document.getElementById("sidebar");
+      const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
+
+      toggleSidebarBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        
+        if (sidebar.classList.contains("collapsed")) {
+          toggleSidebarBtn.innerHTML = "▶";
+          localStorage.setItem("sidebarCollapsed", "true");
+        } else {
+          toggleSidebarBtn.innerHTML = "◀";
+          localStorage.setItem("sidebarCollapsed", "false");
+        }
+
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 300);
+      });
 
       function applyZoomSettings(isPrecision) {
         map.scrollWheelZoom.disable();
