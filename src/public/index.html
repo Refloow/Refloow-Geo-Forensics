@@ -214,7 +214,6 @@
           }
 
           // CHRONOLOGICAL SORTING ENGINE
-          // EXIF dates are often "YYYY:MM:DD HH:MM:SS". JS needs "YYYY-MM-DD" to parse safely.
           data.sort((a, b) => {
             const parseDate = (timeStr) => {
               if (!timeStr || timeStr === "Unknown Time") return 0;
@@ -236,68 +235,136 @@
           const showNumbers = localStorage.getItem("timelineNumbers") !== "false";
 
           // RENDERING MARKERS
+          
+          const distanceThreshold = 0.0001; // Approx 10-15 meters threshold
+          let groupedData = [];
+
           data.forEach((item, index) => {
-            let previewHtmlMap = "";
-            let previewHtmlSidebar = "";
+            item.originalIndex = index;
+            
+            let foundGroup = groupedData.find(group => {
+              return Math.abs(group.lat - item.lat) < distanceThreshold &&
+                     Math.abs(group.lon - item.lon) < distanceThreshold;
+            });
 
-            if (showPreviews) {
-              const encodedPath = encodeURIComponent(item.fullPath);
-              const mediaSrc = `/api/image?path=${encodedPath}`;
-
-              // Determine if the file is a video based on common extensions
-              const isVideo = /\.(mp4|mov|webm|ogg|mkv|avi)$/i.test(item.name);
-
-              if (isVideo) {
-                // Map popup gets full controls. Sidebar gets a muted thumbnail.
-                previewHtmlMap = `<video src="${mediaSrc}" class="popup-thumbnail" controls muted style="background: #000;"></video>`;
-                previewHtmlSidebar = `<video src="${mediaSrc}" class="evidence-thumbnail" muted></video>`;
-              } else {
-                // Standard Image rendering
-                previewHtmlMap = `<img src="${mediaSrc}" class="popup-thumbnail" alt="Preview">`;
-                previewHtmlSidebar = `<img src="${mediaSrc}" class="evidence-thumbnail" alt="Preview">`;
-              }
+            if (foundGroup) {
+              foundGroup.items.push(item);
+            } else {
+              groupedData.push({
+                lat: item.lat,
+                lon: item.lon,
+                items: [item]
+              });
             }
+          });
 
-            const marker = L.marker([item.lat, item.lon]).addTo(map);
+          const yellowIcon = L.divIcon({
+            className: 'custom-svg-pin',
+            html: `<svg viewBox="0 0 24 40" width="25" height="41" style="filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.5));">
+                     <path d="M12 0C5.373 0 0 5.373 0 12c0 9.6 12 28 12 28s12-18.4 12-28C24 5.373 18.627 0 12 0z" fill="#fbbf24" stroke="#b45309" stroke-width="1"/>
+                     <circle cx="12" cy="12" r="4.5" fill="#ffffff" />
+                   </svg>`,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+          });
 
-            // Add the chronological number badge if enabled
+          function getPreviewHtml(item, isMap) {
+            if (!showPreviews) return "";
+            const encodedPath = encodeURIComponent(item.fullPath);
+            const mediaSrc = `/api/image?path=${encodedPath}`;
+            const isVideo = /\.(mp4|mov|webm|ogg|mkv|avi)$/i.test(item.name);
+
+            if (isVideo) {
+              return isMap ? `<video src="${mediaSrc}" class="popup-thumbnail" controls muted style="background: #000;"></video>` 
+                           : `<video src="${mediaSrc}" class="evidence-thumbnail" muted></video>`;
+            } else {
+              return isMap ? `<img src="${mediaSrc}" class="popup-thumbnail" alt="Preview">` 
+                           : `<img src="${mediaSrc}" class="evidence-thumbnail" alt="Preview">`;
+            }
+          }
+
+          groupedData.forEach(group => {
+            let marker;
+            const isCluster = group.items.length > 1;
+
+            // standard blue pin for singles, custom yellow SVG pin for clusters
+            marker = isCluster 
+              ? L.marker([group.lat, group.lon], { icon: yellowIcon }).addTo(map)
+              : L.marker([group.lat, group.lon]).addTo(map);
+
             if (showNumbers) {
-              marker.bindTooltip((index + 1).toString(), {
-                permanent: true,
-                direction: "right",
-                className: "timeline-number-tooltip",
-                offset: [-15, -2],
+              let tooltipContent = (group.items[0].originalIndex + 1).toString();
+              
+              // If it's a cluster, append the label beneath it
+              if (isCluster) {
+                  tooltipContent += `<div class="cluster-files-label">${group.items.length} Files</div>`;
+              }
+
+              marker.bindTooltip(tooltipContent, {
+                permanent: true, 
+                direction: "right", 
+                className: "timeline-number-tooltip", 
+                offset: [-15, -2]
               });
             }
 
-            const popupContent = `
-                        ${previewHtmlMap}
-                        <div style="font-size: 13px;">
-                            <b>File:</b> ${escapeHTML(item.name)}<br>
-                            <b>Time:</b> ${item.time}<br>
-                            <b>Device:</b> ${item.camera}
-                        </div>
-                    `;
+            // --- POPUP LOGIC ---
+            if (!isCluster) {
+              const item = group.items[0];
+              const popupContent = `
+                ${getPreviewHtml(item, true)}
+                <div style="font-size: 13px;">
+                    <b>File:</b> ${escapeHTML(item.name)}<br>
+                    <b>Time:</b> ${item.time}<br>
+                    <b>Device:</b> ${item.camera}
+                </div>`;
+              marker.bindPopup(popupContent);
+            } else {
+              // a scrollable popup modal for clustered items
+              let popupContent = `<div class="scrollable-group-popup">
+                <h3 style="margin-top:0; margin-bottom: 15px; color:#e94560;">${group.items.length} Files Found Here</h3>`;
 
-            marker.bindPopup(popupContent);
+              group.items.forEach(item => {
+                popupContent += `
+                  <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;">
+                    <span style="font-size: 11px; color:#aaa; font-weight: bold;">Chronological File #${item.originalIndex + 1}</span><br>
+                    ${getPreviewHtml(item, true)}
+                    <div style="font-size: 13px;">
+                        <b>File:</b> ${escapeHTML(item.name)}<br>
+                        <b>Time:</b> ${item.time}<br>
+                        <b>Device:</b> ${item.camera}
+                    </div>
+                  </div>`;
+              });
+              popupContent += `</div>`;
+              
+              marker.bindPopup(popupContent, { className: 'group-popup-container', minWidth: 220 });
+            }
+
             markers.push(marker);
-            latlngs.push([item.lat, item.lon]);
 
-            const div = document.createElement("div");
-            div.className = "evidence-item";
-            div.innerHTML = `
-                        <div class="evidence-info">
-                            <span class="evidence-name">${index + 1}. ${escapeHTML(item.name)}</span>
-                            <div class="evidence-meta">📅 ${item.time}</div>
-                            <div class="evidence-meta">📱 ${item.camera}</div>
-                        </div>
-                        ${previewHtmlSidebar}
-                    `;
-            div.onclick = () => {
-              map.flyTo([item.lat, item.lon], 15);
-              marker.openPopup();
-            };
-            listDiv.appendChild(div);
+            // Sidebar Elements
+            group.items.forEach(item => {
+              latlngs.push([item.lat, item.lon]); 
+
+              const div = document.createElement("div");
+              div.className = "evidence-item";
+              div.innerHTML = `
+                  <div class="evidence-info">
+                      <span class="evidence-name">${item.originalIndex + 1}. ${escapeHTML(item.name)}</span>
+                      <div class="evidence-meta">📅 ${item.time}</div>
+                      <div class="evidence-meta">📱 ${item.camera}</div>
+                  </div>
+                  ${getPreviewHtml(item, false)}
+              `;
+              
+              div.onclick = () => {
+                map.flyTo([group.lat, group.lon], 18);
+                marker.openPopup();
+              };
+              listDiv.appendChild(div);
+            });
           });
 
           // RENDER TIMELINE PATH
