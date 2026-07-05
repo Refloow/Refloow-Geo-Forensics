@@ -38,14 +38,14 @@
       <button id="analyseBtn" class="analyse-btn" onclick="startScan()">Analyze</button>
     </div>
 
-<div id="main-area" style="position: relative;">
+    <div id="main-area" style="position: relative;">
       <div id="sidebar">
         <div style="text-align: center; color: #888; margin-top: 5px; margin-bottom: 15px;" id="status-msg">Waiting for scan...</div>
         <div id="results-list"></div>
       </div>
-      
+
       <button id="toggleSidebarBtn" title="Toggle Sidebar">◀</button>
-      
+
       <div id="map"></div>
     </div>
 
@@ -54,6 +54,20 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <script>
+      function escapeHTML(str) {
+        return str.replace(
+          /[&<>'"]/g,
+          (tag) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;",
+            }[tag] || tag)
+        );
+      }
+
       var map = L.map("map", {
         zoomSnap: 0.1,
       }).setView([0, 0], 3);
@@ -149,32 +163,31 @@
         const pathInputEl = document.getElementById("folderPath");
 
         try {
-        const pathInput = document.getElementById("folderPath").value;
-        const statusMsg = document.getElementById("status-msg");
-        const listDiv = document.getElementById("results-list");
+          const pathInput = document.getElementById("folderPath").value;
+          const statusMsg = document.getElementById("status-msg");
+          const listDiv = document.getElementById("results-list");
 
-        if (!pathInput) {
-          showCustomAlert("Please enter a path to your evidence folder.", "Input Required");
-          return;
-        }
+          if (!pathInput) {
+            showCustomAlert("Please enter a path to your evidence folder.", "Input Required");
+            return;
+          }
 
-        pathInputEl.classList.add("scanning-active");
+          pathInputEl.classList.add("scanning-active");
 
-        analyseBtn.innerText = "Scanning...";
-        analyseBtn.style.opacity = "0.7";
-        analyseBtn.style.cursor = "wait";
+          analyseBtn.innerText = "Scanning...";
+          analyseBtn.style.opacity = "0.7";
+          analyseBtn.style.cursor = "wait";
 
-        statusMsg.innerText = "Scaning in progress...";
-        listDiv.innerHTML = "";
+          statusMsg.innerText = "Scaning in progress...";
+          listDiv.innerHTML = "";
 
-        markers.forEach((m) => map.removeLayer(m));
-        markers = [];
+          markers.forEach((m) => map.removeLayer(m));
+          markers = [];
 
-        if (polylineLayer) {
-          map.removeLayer(polylineLayer);
-          polylineLayer = null;
-        }
-
+          if (polylineLayer) {
+            map.removeLayer(polylineLayer);
+            polylineLayer = null;
+          }
 
           const response = await fetch("/api/scan", {
             method: "POST",
@@ -230,7 +243,7 @@
             if (showPreviews) {
               const encodedPath = encodeURIComponent(item.fullPath);
               const mediaSrc = `/api/image?path=${encodedPath}`;
-              
+
               // Determine if the file is a video based on common extensions
               const isVideo = /\.(mp4|mov|webm|ogg|mkv|avi)$/i.test(item.name);
 
@@ -260,7 +273,7 @@
             const popupContent = `
                         ${previewHtmlMap}
                         <div style="font-size: 13px;">
-                            <b>File:</b> ${item.name}<br>
+                            <b>File:</b> ${escapeHTML(item.name)}<br>
                             <b>Time:</b> ${item.time}<br>
                             <b>Device:</b> ${item.camera}
                         </div>
@@ -274,7 +287,7 @@
             div.className = "evidence-item";
             div.innerHTML = `
                         <div class="evidence-info">
-                            <span class="evidence-name">${index + 1}. ${item.name}</span>
+                            <span class="evidence-name">${index + 1}. ${escapeHTML(item.name)}</span>
                             <div class="evidence-meta">📅 ${item.time}</div>
                             <div class="evidence-meta">📱 ${item.camera}</div>
                         </div>
@@ -305,7 +318,7 @@
           isScanning = false;
 
           pathInputEl.classList.remove("scanning-active");
-          
+
           analyseBtn.innerText = "Analyze";
           analyseBtn.style.opacity = "1";
           analyseBtn.style.cursor = "pointer";
@@ -542,7 +555,7 @@
 
       toggleSidebarBtn.addEventListener("click", () => {
         sidebar.classList.toggle("collapsed");
-        
+
         if (sidebar.classList.contains("collapsed")) {
           toggleSidebarBtn.innerHTML = "▶";
           localStorage.setItem("sidebarCollapsed", "true");
