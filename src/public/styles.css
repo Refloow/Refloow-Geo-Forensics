@@ -862,3 +862,68 @@ body.light-theme .scanning-active {
     background-color: #f9f9f9 !important;
     color: #000000 !important;
 }
+
+
+
+/* =========================================
+   GROUPED PINS & SCROLLABLE MODAL
+   ========================================= */
+
+.group-popup-container .leaflet-popup-content-wrapper {
+    background-color: #1a1a24;
+    color: #fff;
+    border: 1px solid #e94560;
+}
+
+body.light-theme .group-popup-container .leaflet-popup-content-wrapper {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    border: 1px solid #e94560;
+}
+
+.group-popup-container .leaflet-popup-tip {
+    background-color: #e94560;
+}
+
+.scrollable-group-popup {
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 8px;
+    overflow-x: hidden;
+}
+
+.scrollable-group-popup::-webkit-scrollbar {
+    width: 6px;
+}
+.scrollable-group-popup::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+.scrollable-group-popup::-webkit-scrollbar-thumb {
+    background: #e94560;
+    border-radius: 3px;
+}
+
+.timeline-number-tooltip.group-tooltip {
+    width: auto;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.cluster-files-label {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fbbf24;
+    color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    border: 1px solid #b45309;
+    line-height: normal;
+}
