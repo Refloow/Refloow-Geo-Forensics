@@ -146,6 +146,7 @@
         isScanning = true;
 
         const analyseBtn = document.getElementById("analyseBtn");
+        const pathInputEl = document.getElementById("folderPath");
 
         try {
         const pathInput = document.getElementById("folderPath").value;
@@ -156,6 +157,8 @@
           showCustomAlert("Please enter a path to your evidence folder.", "Input Required");
           return;
         }
+
+        pathInputEl.classList.add("scanning-active");
 
         analyseBtn.innerText = "Scanning...";
         analyseBtn.style.opacity = "0.7";
@@ -289,6 +292,9 @@
         } finally {
           // Unlock UI absolutely no matter what happens (success or error)
           isScanning = false;
+
+          pathInputEl.classList.remove("scanning-active");
+          
           analyseBtn.innerText = "Analyze";
           analyseBtn.style.opacity = "1";
           analyseBtn.style.cursor = "pointer";
