@@ -229,9 +229,20 @@
 
             if (showPreviews) {
               const encodedPath = encodeURIComponent(item.fullPath);
-              const imgSrc = `/api/image?path=${encodedPath}`;
-              previewHtmlMap = `<img src="${imgSrc}" class="popup-thumbnail" alt="Preview">`;
-              previewHtmlSidebar = `<img src="${imgSrc}" class="evidence-thumbnail" alt="Preview">`;
+              const mediaSrc = `/api/image?path=${encodedPath}`;
+              
+              // Determine if the file is a video based on common extensions
+              const isVideo = /\.(mp4|mov|webm|ogg|mkv|avi)$/i.test(item.name);
+
+              if (isVideo) {
+                // Map popup gets full controls. Sidebar gets a muted thumbnail.
+                previewHtmlMap = `<video src="${mediaSrc}" class="popup-thumbnail" controls muted style="background: #000;"></video>`;
+                previewHtmlSidebar = `<video src="${mediaSrc}" class="evidence-thumbnail" muted></video>`;
+              } else {
+                // Standard Image rendering
+                previewHtmlMap = `<img src="${mediaSrc}" class="popup-thumbnail" alt="Preview">`;
+                previewHtmlSidebar = `<img src="${mediaSrc}" class="evidence-thumbnail" alt="Preview">`;
+              }
             }
 
             const marker = L.marker([item.lat, item.lon]).addTo(map);
