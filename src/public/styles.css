@@ -835,3 +835,30 @@ body.light-theme #toggleSidebarBtn:hover {
 body.light-theme #sidebar.collapsed ~ #toggleSidebarBtn {
     border-left: 1px solid #cccccc;
 }
+
+
+/* =========================================
+   INPUT FIELD SCANNING ANIMATION
+   ========================================= */
+
+
+@keyframes inputScanSweep {
+    0% { background-position: 200% 0; }
+    100% { background-position: -100% 0; }
+}
+
+.scanning-active {
+    background-image: linear-gradient(90deg, transparent 25%, #ff5773 50%, transparent 75%) !important;
+    background-color: #111a30 !important;
+    background-size: 200% 100% !important;
+    background-repeat: no-repeat !important;
+    animation: inputScanSweep 1.5s infinite linear !important;
+    color: #ffffff !important;
+    pointer-events: none !important;
+}
+
+body.light-theme .scanning-active {
+    background-image: linear-gradient(90deg, transparent 25%, #ff5773 50%, transparent 75%) !important;
+    background-color: #f9f9f9 !important;
+    color: #000000 !important;
+}
