@@ -927,3 +927,61 @@ body.light-theme .group-popup-container .leaflet-popup-content-wrapper {
     border: 1px solid #b45309;
     line-height: normal;
 }
+
+/* =========================================
+   ESTIMATE SCAN BOX
+   ========================================= */
+
+#estimateBox {
+    background-color: #111a30; 
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 15px 12px;
+    margin-bottom: 15px;
+    text-align: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.estimate-label {
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#estimateTimer {
+    font-weight: bold;
+    font-size: 22px;
+    color: #4ade80; 
+    text-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
+    margin: 5px 0;
+}
+
+#estimateFileCount {
+    color: #a0a0a0;
+    font-size: 12px;
+}
+
+/* =========================================
+   ESTIMATE SCAN BOX - LIGHT THEME OVERRIDES
+   ========================================= */
+
+body.light-theme #estimateBox {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+body.light-theme .estimate-label {
+    color: #666666;
+}
+
+body.light-theme #estimateTimer {
+    text-shadow: none;
+}
+
+body.light-theme #estimateFileCount {
+    color: #555555;
+}
