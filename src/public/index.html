@@ -39,10 +39,16 @@
     </div>
 
     <div id="main-area" style="position: relative;">
-      <div id="sidebar">
-        <div style="text-align: center; color: #888; margin-top: 5px; margin-bottom: 15px;" id="status-msg">Waiting for scan...</div>
-        <div id="results-list"></div>
+<div id="sidebar">
+      <div id="estimateBox" style="display: none;">
+        <div class="estimate-label">Est. Scan Time</div>
+        <div id="estimateTimer">--</div>
+        <div id="estimateFileCount">-- files</div>
       </div>
+
+      <div style="text-align: center; color: #888; margin-top: 5px; margin-bottom: 15px;" id="status-msg">Waiting for scan...</div>
+      <div id="results-list"></div>
+    </div>
 
       <button id="toggleSidebarBtn" title="Toggle Sidebar">◀</button>
 
@@ -54,6 +60,72 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <script>
+// Variable to hold our typing timer
+let typingTimer;
+
+// Background estimation function targeting the dedicated sidebar panel
+async function updateEstimate(path) {
+    const estimateBox = document.getElementById('estimateBox');
+    const estimateTimer = document.getElementById('estimateTimer');
+    const estimateFileCount = document.getElementById('estimateFileCount');
+    
+    if (!path || path.trim() === '') {
+        estimateBox.style.display = 'none'; // Hide if input is empty
+        return;
+    }
+    
+    // Show the box and set loading state
+    estimateBox.style.display = 'block';
+    estimateTimer.innerText = '...';
+    estimateTimer.style.color = '#888';
+    estimateFileCount.innerText = 'Calculating...';
+    
+    try {
+        const response = await fetch('/api/estimate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ folderPath: path })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.count > 0) {
+            const msPerFile = 0.035; // Baseline speed
+            const estSeconds = Math.ceil(result.count * msPerFile);
+            
+            let timeString = "";
+            if (estSeconds > 60) {
+                timeString = `${Math.floor(estSeconds / 60)}m ${estSeconds % 60}s`;
+            } else if (estSeconds < 1) {
+                timeString = "< 1s";
+            } else {
+                timeString = `${estSeconds}s`;
+            }
+            
+            estimateTimer.style.color = "#4ade80"; // Bright Green for readiness
+            estimateTimer.innerText = `~${timeString}`;
+            estimateFileCount.innerText = `${result.count} files found`;
+        } else if (result.success && result.count === 0) {
+            estimateTimer.style.color = "#e94560"; // Red warning
+            estimateTimer.innerText = '0s';
+            estimateFileCount.innerText = 'No files found in directory.';
+        } else {
+            estimateBox.style.display = 'none'; // Hide on invalid path
+        }
+    } catch (err) {
+        estimateBox.style.display = 'none'; // Hide on error
+    }
+}
+
+// Event Listener: When the user manually types in the input box
+document.getElementById('folderPath').addEventListener('input', (e) => {
+    clearTimeout(typingTimer); 
+    
+    // Only run the estimate 500ms AFTER they stop typing
+    typingTimer = setTimeout(() => {
+        updateEstimate(e.target.value);
+    }, 500); 
+});
       function escapeHTML(str) {
         return str.replace(
           /[&<>'"]/g,
@@ -118,13 +190,13 @@
 
       function setMapTheme(isLight, overrideUserMap = false) {
         // Safely remove ALL base layers before applying a new one
-        Object.values(baseMaps).forEach(layer => {
+        Object.values(baseMaps).forEach((layer) => {
           if (map.hasLayer(layer)) map.removeLayer(layer);
         });
 
         const savedMapLayer = localStorage.getItem("selectedBaseMap");
 
-        // If the user hasn't explicitly clicked the theme toggle (overrideUserMap = false) 
+        // If the user hasn't explicitly clicked the theme toggle (overrideUserMap = false)
         // AND they have a saved custom map layer, restore it.
         if (savedMapLayer && baseMaps[savedMapLayer] && !overrideUserMap) {
           baseMaps[savedMapLayer].addTo(map);
@@ -141,7 +213,7 @@
       }
 
       // Adding listener to save map layer selection when changed via Leaflet UI
-      map.on('baselayerchange', function (e) {
+      map.on("baselayerchange", function (e) {
         localStorage.setItem("selectedBaseMap", e.name);
       });
 
@@ -249,16 +321,15 @@
           const showNumbers = localStorage.getItem("timelineNumbers") !== "false";
 
           // RENDERING MARKERS
-          
+
           const distanceThreshold = 0.0001; // Approx 10-15 meters threshold
           let groupedData = [];
 
           data.forEach((item, index) => {
             item.originalIndex = index;
-            
-            let foundGroup = groupedData.find(group => {
-              return Math.abs(group.lat - item.lat) < distanceThreshold &&
-                     Math.abs(group.lon - item.lon) < distanceThreshold;
+
+            let foundGroup = groupedData.find((group) => {
+              return Math.abs(group.lat - item.lat) < distanceThreshold && Math.abs(group.lon - item.lon) < distanceThreshold;
             });
 
             if (foundGroup) {
@@ -267,20 +338,20 @@
               groupedData.push({
                 lat: item.lat,
                 lon: item.lon,
-                items: [item]
+                items: [item],
               });
             }
           });
 
           const yellowIcon = L.divIcon({
-            className: 'custom-svg-pin',
+            className: "custom-svg-pin",
             html: `<svg viewBox="0 0 24 40" width="25" height="41" style="filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.5));">
                      <path d="M12 0C5.373 0 0 5.373 0 12c0 9.6 12 28 12 28s12-18.4 12-28C24 5.373 18.627 0 12 0z" fill="#fbbf24" stroke="#b45309" stroke-width="1"/>
                      <circle cx="12" cy="12" r="4.5" fill="#ffffff" />
                    </svg>`,
             iconSize: [25, 41],
             iconAnchor: [12, 41],
-            popupAnchor: [1, -34]
+            popupAnchor: [1, -34],
           });
 
           function getPreviewHtml(item, isMap) {
@@ -290,36 +361,32 @@
             const isVideo = /\.(mp4|mov|webm|ogg|mkv|avi)$/i.test(item.name);
 
             if (isVideo) {
-              return isMap ? `<video src="${mediaSrc}" class="popup-thumbnail" controls muted style="background: #000;"></video>` 
-                           : `<video src="${mediaSrc}" class="evidence-thumbnail" muted></video>`;
+              return isMap ? `<video src="${mediaSrc}" class="popup-thumbnail" controls muted style="background: #000;"></video>` : `<video src="${mediaSrc}" class="evidence-thumbnail" muted></video>`;
             } else {
-              return isMap ? `<img src="${mediaSrc}" class="popup-thumbnail" alt="Preview">` 
-                           : `<img src="${mediaSrc}" class="evidence-thumbnail" alt="Preview">`;
+              return isMap ? `<img src="${mediaSrc}" class="popup-thumbnail" alt="Preview">` : `<img src="${mediaSrc}" class="evidence-thumbnail" alt="Preview">`;
             }
           }
 
-          groupedData.forEach(group => {
+          groupedData.forEach((group) => {
             let marker;
             const isCluster = group.items.length > 1;
 
             // standard blue pin for singles, custom yellow SVG pin for clusters
-            marker = isCluster 
-              ? L.marker([group.lat, group.lon], { icon: yellowIcon }).addTo(map)
-              : L.marker([group.lat, group.lon]).addTo(map);
+            marker = isCluster ? L.marker([group.lat, group.lon], {icon: yellowIcon}).addTo(map) : L.marker([group.lat, group.lon]).addTo(map);
 
             if (showNumbers) {
               let tooltipContent = (group.items[0].originalIndex + 1).toString();
-              
+
               // If it's a cluster, append the label beneath it
               if (isCluster) {
-                  tooltipContent += `<div class="cluster-files-label">${group.items.length} Files</div>`;
+                tooltipContent += `<div class="cluster-files-label">${group.items.length} Files</div>`;
               }
 
               marker.bindTooltip(tooltipContent, {
-                permanent: true, 
-                direction: "right", 
-                className: "timeline-number-tooltip", 
-                offset: [-15, -2]
+                permanent: true,
+                direction: "right",
+                className: "timeline-number-tooltip",
+                offset: [-15, -2],
               });
             }
 
@@ -339,7 +406,7 @@
               let popupContent = `<div class="scrollable-group-popup">
                 <h3 style="margin-top:0; margin-bottom: 15px; color:#e94560;">${group.items.length} Files Found Here</h3>`;
 
-              group.items.forEach(item => {
+              group.items.forEach((item) => {
                 popupContent += `
                   <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;">
                     <span style="font-size: 11px; color:#aaa; font-weight: bold;">Chronological File #${item.originalIndex + 1}</span><br>
@@ -352,15 +419,15 @@
                   </div>`;
               });
               popupContent += `</div>`;
-              
-              marker.bindPopup(popupContent, { className: 'group-popup-container', minWidth: 220 });
+
+              marker.bindPopup(popupContent, {className: "group-popup-container", minWidth: 220});
             }
 
             markers.push(marker);
 
             // Sidebar Elements
-            group.items.forEach(item => {
-              latlngs.push([item.lat, item.lon]); 
+            group.items.forEach((item) => {
+              latlngs.push([item.lat, item.lon]);
 
               const div = document.createElement("div");
               div.className = "evidence-item";
@@ -372,7 +439,7 @@
                   </div>
                   ${getPreviewHtml(item, false)}
               `;
-              
+
               div.onclick = () => {
                 map.flyTo([group.lat, group.lon], 18);
                 marker.openPopup();
@@ -738,9 +805,9 @@
       themeToggle.addEventListener("change", (e) => {
         const isChecked = e.target.checked;
         localStorage.setItem("lightMode", isChecked ? "true" : "false");
-        
+
         // Passing 'true' to force the map to sync with the toggle selection
-        applyTheme(isChecked, true); 
+        applyTheme(isChecked, true);
       });
 
       // Listen for Preview Toggle
@@ -850,9 +917,11 @@
           // If the user picked a folder (and didn't hit cancel), update the input field
           if (selectedPath) {
             document.getElementById("folderPath").value = selectedPath;
+
+            // NEW: Trigger the estimation immediately after OS folder selection
+            updateEstimate(selectedPath);
           }
         } else {
-          // Fallback in case they are running it in a raw browser instead of Electron
           showCustomAlert("Native folder selection is only available in the desktop application.", "Notice");
         }
       }
