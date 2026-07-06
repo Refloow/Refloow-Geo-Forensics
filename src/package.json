@@ -58,8 +58,21 @@
           "arch": [
             "x64"
           ]
+        },
+        {
+          "target": "appx",
+          "arch": [
+            "x64"
+          ]
         }
       ]
+    },
+    "appx": {
+      "identityName": "Refloow.RefloowGeoForensics", 
+      "publisher": "CN=8281F212-0778-4AAA-A785-4B72BFF348A9",
+      "publisherDisplayName": "Refloow",
+      "applicationId": "RefloowGeoForensics",
+      "backgroundColor": "#121212"
     },
     "mac": {
       "icon": "img/iconMAC.png",
