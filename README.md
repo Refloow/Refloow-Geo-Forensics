@@ -34,9 +34,9 @@
 ---
 | App UI - Previews Enabled (Satellite Map) | App UI - Previews Disabled (Max Performance) |
 | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/d6d5fc02-8327-4804-8abb-1e82ba206837" alt="Previews enabled satellite map layer" /> | <img src="https://github.com/user-attachments/assets/58530242-98de-448e-ab0f-963a130766c9" alt="Previews disabled max performance" /> |
+| <img  src="https://github.com/user-attachments/assets/74f80f1d-6865-4a86-8237-e68f3f3bce12" alt="Previews enabled satellite map layer" /> | <img src="https://github.com/user-attachments/assets/3c09a4eb-82fe-40ef-93de-35c917b46b02" alt="Previews disabled max performance" /> |
 | **App UI - Previews & Light Mode Enabled** | **App UI - Light Mode (Standard Street Map)** |
-| <img src="https://github.com/user-attachments/assets/c20a86df-30b6-456d-bcf9-4989a58677d0" alt="Previews & light mode enabled" /> | <img src="https://github.com/user-attachments/assets/4c01d326-40c8-4841-9b83-ba6e8535cfcc" alt="Previews disabled & light mode enabled standard street map" /> |
+| <img width="2558" height="1378" src="https://github.com/user-attachments/assets/d662a91d-d4e5-47a7-9918-db0ce0ebc39f" alt="Previews & light mode enabled" /> | <img src="https://github.com/user-attachments/assets/4f7531e3-47c1-471d-b7e9-023e9ae2733c" alt="Previews disabled & light mode enabled standard street map"/> |
 * not all mapping options are shown here there is 6 layer modes
 
 
