@@ -29,7 +29,7 @@
 * **Multi system support:** Available on Windows, Linux & MacOS
 * **Utilizes industry standard [ExifTool](https://exiftool.org/) by Phil Harvey** - as a exif data extraction engine, via node.js exiftool-vendored approach, supporting every image, video or filetype ever available!
 
-<img src="https://github.com/user-attachments/assets/d6d5fc02-8327-4804-8abb-1e82ba206837" alt="Previews enabled satellite map layer" />
+<img  src="https://github.com/user-attachments/assets/74f80f1d-6865-4a86-8237-e68f3f3bce12" alt="Previews enabled satellite map layer" />
 
 ---
 | App UI - Previews Enabled (Satellite Map) | App UI - Previews Disabled (Max Performance) |
