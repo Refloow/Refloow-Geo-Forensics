@@ -36,8 +36,7 @@
       "node_modules/exiftool-vendored.pl/**"
     ],
     "directories": {
-      "output": "release",
-      "buildResources": "img"
+      "output": "release"
     },
     "files": [
       "**/*",
@@ -52,7 +51,7 @@
       "!dist/electron/**/*.js"
     ],
     "win": {
-      "icon": "img/Refloow-Geo-Forensics.png",
+      "icon": "img/icon.ico",
       "target": [
         {
           "target": "nsis",
