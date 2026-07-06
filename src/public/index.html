@@ -116,20 +116,34 @@
 
       L.control.layers(baseMaps, null, {position: "topright"}).addTo(map);
 
-      function setMapTheme(isLight) {
-        // safely remove whatever layer is currently active
-        if (map.hasLayer(cartoDark)) map.removeLayer(cartoDark);
-        if (map.hasLayer(cartoLight)) map.removeLayer(cartoLight);
-        if (map.hasLayer(esriSatellite)) map.removeLayer(esriSatellite);
-        if (map.hasLayer(topoMap)) map.removeLayer(topoMap);
+      function setMapTheme(isLight, overrideUserMap = false) {
+        // Safely remove ALL base layers before applying a new one
+        Object.values(baseMaps).forEach(layer => {
+          if (map.hasLayer(layer)) map.removeLayer(layer);
+        });
 
-        // Then, apply the correct base theme from the settings toggle
-        if (isLight) {
-          cartoLight.addTo(map);
+        const savedMapLayer = localStorage.getItem("selectedBaseMap");
+
+        // If the user hasn't explicitly clicked the theme toggle (overrideUserMap = false) 
+        // AND they have a saved custom map layer, restore it.
+        if (savedMapLayer && baseMaps[savedMapLayer] && !overrideUserMap) {
+          baseMaps[savedMapLayer].addTo(map);
         } else {
-          cartoDark.addTo(map);
+          // Otherwise, fall back to the selected theme's default map
+          if (isLight) {
+            cartoLight.addTo(map);
+            localStorage.setItem("selectedBaseMap", "Forensic Light");
+          } else {
+            cartoDark.addTo(map);
+            localStorage.setItem("selectedBaseMap", "Forensic Dark");
+          }
         }
       }
+
+      // Adding listener to save map layer selection when changed via Leaflet UI
+      map.on('baselayerchange', function (e) {
+        localStorage.setItem("selectedBaseMap", e.name);
+      });
 
       // --- Custom Precision Zoom Control ---
       L.Control.ZoomMode = L.Control.extend({
@@ -668,13 +682,13 @@
         donationModal.style.display = "none";
       };
 
-      function applyTheme(isLight) {
+      function applyTheme(isLight, overrideMap = false) {
         if (isLight) {
           document.body.classList.add("light-theme");
         } else {
           document.body.classList.remove("light-theme");
         }
-        setMapTheme(isLight);
+        setMapTheme(isLight, overrideMap);
       }
 
       // Boot Loader for Settings
@@ -724,7 +738,9 @@
       themeToggle.addEventListener("change", (e) => {
         const isChecked = e.target.checked;
         localStorage.setItem("lightMode", isChecked ? "true" : "false");
-        applyTheme(isChecked);
+        
+        // Passing 'true' to force the map to sync with the toggle selection
+        applyTheme(isChecked, true); 
       });
 
       // Listen for Preview Toggle
