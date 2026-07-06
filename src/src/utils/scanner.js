@@ -78,8 +78,16 @@ async function scanDirectory(dirPath) {
         const fullPath = path.join(normalizedPath, file);
         
         try {
-            // Skip folders, process files only
             const stat = await fs.promises.stat(fullPath);
+            
+            // If it's a directory, recursively scan it and append the results
+            if (stat.isDirectory()) {
+                const subDirResults = await scanDirectory(fullPath);
+                results = results.concat(subDirResults);
+                continue;
+            }
+
+            // Skip anything else that isn't a file
             if (!stat.isFile()) continue;
 
             // Let ExifTool read the file (works for JPG, CR3, MP4, MOV, HEIC, etc.)
@@ -107,7 +115,7 @@ async function scanDirectory(dirPath) {
                 });
             }
         } catch (err) {
-            // Silently skip unreadable or non-media files
+            // Silently skip unreadable files or restricted access folders
         }
     }
 
