@@ -137,6 +137,12 @@ function createWindow() {
 
 // Listen for the frontend telling us to check for updates
 ipcMain.on('check-updates', (event, autoUpdateEnabled) => {
+    // Abort the update process if running as a Microsoft Store AppX
+    if (process.windowsStore) {
+        console.log("Running as a Microsoft Store app. Auto-updates disabled.");
+        return; 
+    }
+
     if (autoUpdateEnabled === 'true') {
         autoUpdater.checkForUpdates().catch(err => {
             dialog.showErrorBox("Check Promise Error", err.toString());
