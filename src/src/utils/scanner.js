@@ -122,7 +122,37 @@ async function scanDirectory(dirPath) {
     return results;
 }
 
-module.exports = { scanDirectory };
+async function countFiles(dirPath) {
+    let count = 0;
+    const normalizedPath = path.resolve(dirPath.trim());
+    
+    if (!fs.existsSync(normalizedPath)) {
+        throw new Error("Folder doesnt exist or path is not valid");
+    }
+
+    // Fast recursive directory walker
+    async function walk(dir) {
+        const files = await fs.promises.readdir(dir);
+        for (const file of files) {
+            const fullPath = path.join(dir, file);
+            try {
+                const stat = await fs.promises.stat(fullPath);
+                if (stat.isDirectory()) {
+                    await walk(fullPath); // Recurse into subdirectories
+                } else if (stat.isFile()) {
+                    count++;
+                }
+            } catch (err) {
+                // Silently skip unreadable files
+            }
+        }
+    }
+
+    await walk(normalizedPath);
+    return count;
+}
+
+module.exports = { scanDirectory, countFiles };
 
 /* Refloow Geo Forensics
  * Copyright (C) 2026  Veljko Vuckovic (Refloow) <legal@refloow.com>
