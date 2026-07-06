@@ -59,6 +59,7 @@ const REFLOOW_BRAND_IDENTITY = {
 const express = require('express');
 const path = require('path');
 const apiRoutes = require('./routes/api');
+const { countFiles } = require('../src/utils/scanner');
 
 const app = express();
 const PORT = 3000;
@@ -66,6 +67,20 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', apiRoutes);
+
+app.post('/api/estimate', async (req, res) => {
+    try {
+        const { folderPath } = req.body;
+        if (!folderPath) {
+            return res.status(400).json({ success: false, error: 'No path provided' });
+        }
+        
+        const count = await countFiles(folderPath);
+        res.json({ success: true, count });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // start the server dynamically
 function startServer(port = 3000) {
