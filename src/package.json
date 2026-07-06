@@ -51,7 +51,7 @@
       "!dist/electron/**/*.js"
     ],
     "win": {
-      "icon": "build/icon.ico",
+      "icon": "img/icon.ico",
       "target": [
         {
           "target": "nsis",
@@ -82,7 +82,7 @@
       ]
     },
     "linux": {
-      "icon": "build/Refloow-Geo-Forensics.png",
+      "icon": "img/Refloow-Geo-Forensics.png",
       "target": [
         "AppImage",
         "deb"
@@ -101,7 +101,7 @@
       "oneClick": false,
       "license": "LICENSE",
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "build/icon.ico",
+      "installerIcon": "img/icon.ico",
       "shortcutName": "Refloow Geo Forensics",
       "createDesktopShortcut": true,
       "perMachine": false,
