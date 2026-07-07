@@ -184,40 +184,6 @@ Refloow Geo Forensics is completely free, open-source. If this tool has saved yo
 
 **Refloow Geo Forensics** has been recognized by the cybersecurity community.
 
-> "Refloow Geo Forensics fills a niche for investigators and OSINT practitioners who need a quick, visual way to process batches of geotagged images without uploading anything to the cloud. [...] For the specific use case of 'I have a folder of JPGs and I need to see where and when they were taken,' this tool gets the job done with minimal friction."
->
-> — **[Dark Web Informer](https://darkwebinformer.com/refloow-geo-forensics-a-free-batch-image-geolocation-and-exif-forensics-tool-for-osint/)** (Feb 2026)
-
-<div align="center">
-  <a href="https://darkwebinformer.com/refloow-geo-forensics-a-free-batch-image-geolocation-and-exif-forensics-tool-for-osint/">
-    <img src="https://img.shields.io/badge/Read_Full_Review-Dark_Web_Informer-CC0000?style=for-the-badge&logo=security&logoColor=white" alt="Read Review on Dark Web Informer">
-  </a>
-</div>
-
-> Refloow Geo Forensics: A Free Batch Image Geolocation and EXIF Forensics Tool for OSINT
-> 
-> — **[osintteam.blog curated list of tools](https://osintteam.blog/osint-related-articles-20260216-10fa2f9b4a31)** (Feb 2026)
-
-> 🔎 OSINT Tool: Refloow Geo Forensics: Extract Hidden Data from Images
-> 
-> — **[CyberSudo](https://www.youtube.com/post/Ugkx4Fi73qxY4QYuQoJE07ZXFs4nTmS-EQ1h)** (Mar 2026)
-
-> OSINTech's Timeline #157
-> 
-> — **[OSINTech](https://osintech.substack.com/p/osintechs-timeline-157-09042026)** (Apr 2026)
-
-> Refloow Geo Forensics: Free batch image geolocation and digital forensics tool
-> 
-> — **[EsGeeks](https://x.com/EsGeeks/status/2042762254660096432)** (Apr 2026)
-
-> Featured OSINT Tools
-> 
-> — **[The OSINT Vault](https://theosintvault.io/)** (Apr 2026)
-
-> OSINT Tools directory feature
->
-> — **[osintrack.com](https://osintrack.com/)** (May 2026)
-
 > Stop Manually Hunting EXIF Data! Refloow Geo Forensics Does It in Seconds
 >
 > "This isn't hobbyist software. This is production-grade forensics infrastructure that happens to be completely free."
@@ -229,4 +195,47 @@ Refloow Geo Forensics is completely free, open-source. If this tool has saved yo
 > "This isn't just convenient—it's legally defensible. When you need to establish movement patterns, verify alibis, or identify chronological inconsistencies in testimony, automated timeline generation eliminates human transcription errors."
 > 
 > — **[Bright Coding](https://www.blog.brightcoding.dev/2026/06/25/stop-manually-hunting-exif-data-refloow-geo-forensics-does-it-in-seconds)** (Jun 2026)
+
+> OSINT Tools directory feature
+>
+> — **[osintrack.com](https://osintrack.com/)** (May 2026)
+
+> Featured OSINT Tools
+> 
+> — **[The OSINT Vault](https://theosintvault.io/)** (Apr 2026)
+
+> Refloow Geo Forensics: Free batch image geolocation and digital forensics tool
+> 
+> — **[EsGeeks](https://x.com/EsGeeks/status/2042762254660096432)** (Apr 2026)
+
+> OSINTech's Timeline #157
+> 
+> — **[OSINTech](https://osintech.substack.com/p/osintechs-timeline-157-09042026)** (Apr 2026)
+
+> 🔎 OSINT Tool: Refloow Geo Forensics: Extract Hidden Data from Images
+> 
+> — **[CyberSudo](https://www.youtube.com/post/Ugkx4Fi73qxY4QYuQoJE07ZXFs4nTmS-EQ1h)** (Mar 2026)
+
+> Refloow Geo Forensics: A Free Batch Image Geolocation and EXIF Forensics Tool for OSINT
+> 
+> — **[osintteam.blog curated list of tools](https://osintteam.blog/osint-related-articles-20260216-10fa2f9b4a31)** (Feb 2026)
+
+> "Refloow Geo Forensics fills a niche for investigators and OSINT practitioners who need a quick, visual way to process batches of geotagged images without uploading anything to the cloud. [...] For the specific use case of 'I have a folder of JPGs and I need to see where and when they were taken,' this tool gets the job done with minimal friction."
+>
+> — **[Dark Web Informer](https://darkwebinformer.com/refloow-geo-forensics-a-free-batch-image-geolocation-and-exif-forensics-tool-for-osint/)** (Feb 2026)
+
+<div align="center">
+  <a href="https://darkwebinformer.com/refloow-geo-forensics-a-free-batch-image-geolocation-and-exif-forensics-tool-for-osint/">
+    <img src="https://img.shields.io/badge/Read_Full_Review-Dark_Web_Informer-CC0000?style=for-the-badge&logo=security&logoColor=white" alt="Read Review on Dark Web Informer">
+  </a>
+</div>
+
+
+
+
+
+
+
+
+
 
