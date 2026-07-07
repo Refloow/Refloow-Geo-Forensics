@@ -85,7 +85,8 @@
       "icon": "img/Refloow-Geo-Forensics.png",
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "snap"
       ],
       "category": "Utility",
       "maintainer": "Veljko Vuckovic <legal@refloow.com>",
