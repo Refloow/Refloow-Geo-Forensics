@@ -11,6 +11,15 @@
 [**Resources and socials**](https://linktr.ee/Refloow) | [**Report a Bug/Request feature**](https://github.com/Refloow/Refloow-Geo-Forensics/issues) | [**Other Refloow Software**](https://refloow.com/open-source-software)
 
 ---
+<p align="left">
+   <a href="[https://apps.microsoft.com/detail/9nflpq45j84v](https://apps.microsoft.com/detail/9MW4C0FZMR81">
+    <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get it from Microsoft" height="45" />
+  </a> 
+ 
+ <a href="[https://snapcraft.io/refloow-photo-studio](https://snapcraft.io/refloow-geo-forensics">
+    <img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store" height="45" />
+  </a>
+</p>
 
 > [!IMPORTANT]
 > You can get the software via, microsoft store, linux snap store or github releases
