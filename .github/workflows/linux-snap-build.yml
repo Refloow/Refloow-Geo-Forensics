@@ -1,0 +1,48 @@
+name: Build Linux Snap Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./src
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10.0'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the Linux application
+        run: npm run package:linux
+
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic
+
+      - name: Publish Snap to Store
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+        run: |
+          # Runs inside ./src, so output folder is just release/
+          snapcraft upload release/*.snap --release=stable
+
+      - name: Upload the finished Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-app-build
+          path: |
+            src/release/*.AppImage
+            src/release/*.deb
+            src/release/*.snap
+            src/release/latest-linux.yml
+          retention-days: 5
