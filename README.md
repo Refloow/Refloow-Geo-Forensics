@@ -12,11 +12,11 @@
 
 ---
 <p align="left">
-   <a href="[https://apps.microsoft.com/detail/9nflpq45j84v](https://apps.microsoft.com/detail/9MW4C0FZMR81">
+   <a href="https://apps.microsoft.com/detail/9MW4C0FZMR81">
     <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get it from Microsoft" height="45" />
   </a> 
  
- <a href="[https://snapcraft.io/refloow-photo-studio](https://snapcraft.io/refloow-geo-forensics">
+ <a href="https://snapcraft.io/refloow-geo-forensics">
     <img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store" height="45" />
   </a>
 </p>
