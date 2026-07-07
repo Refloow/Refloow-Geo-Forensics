@@ -93,7 +93,7 @@
       "description": "Tool for geolocation of evidence."
     },
     "snap": {
-      "summary": "Free batch image & video geolocation digital forensics tool. Automatically extract EXIF data, visualize GPS coordinates on maps, and reconstruct event timelines for OSINT",
+      "summary": "Free batch image & video geolocation digital forensics tool",
       "description": "Refloow™ Geo Forensics is a high-performance, open-source digital forensics tool designed for investigators, OSINT practitioners, and security analysts. It automates the extraction of EXIF metadata from batch image sets or videos, visualizes geospatial data on interactive maps, and reconstructs chronological event timelines to uncover hidden connections in digital evidence. Fully private & local, no data collection, no logins required.",
       "confinement": "strict",
       "plugs": [
