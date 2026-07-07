@@ -13,7 +13,7 @@
 ---
 
 > [!IMPORTANT]
-> Only official download place at the moment is releases tab of this repository: https://github.com/Refloow/Refloow-Geo-Forensics/releases
+> You can get the software via, microsoft store, linux snap store or github releases
 > 
 > If you find this tool useful leave a ⭐ to support my work (its free) and helps others discover the software
 
