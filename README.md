@@ -112,7 +112,7 @@ To obtain this enterprise license inquire using available contact options for fu
 * **All social links:** [linktree](https://linktr.ee/Refloow)
 * **Official community telegram:** [link](https://t.me/+LC9l6d-Jhco2NTU0)
 * **Official community discord:** [link](https://discord.com/invite/D8WCtDD)
-* refloowbusiness@gmail.com
+* contact@refloow.com
 ---
 
 ## ☕ Support the Project
