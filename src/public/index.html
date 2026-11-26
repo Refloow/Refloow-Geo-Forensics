@@ -3,15 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' app://leaflet; style-src 'self' 'unsafe-inline' app://leaflet; img-src 'self' app://leaflet evidence: data: https://server.arcgisonline.com https://*.tile.opentopomap.org https://*.tile.openstreetmap.fr https://tile.openstreetmap.org; media-src evidence:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none';"
+    />
     <title>Refloow GeoForensics</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="app://leaflet/leaflet.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
 
   <div id="custom-title-bar">
     <div class="title-buttons" style="-webkit-app-region: no-drag;">
       <img src="Refloow-Geo-Forensics.png" alt="Refloow Icon" class="title-icon" />
-      <button id="discordBtn" class="title-btn" onclick="window.open('https://discord.com/invite/D8WCtDD', '_blank')">Support</button>
+      <button id="discordBtn" class="title-btn">Support</button>
       <button id="donationBtn" class="title-btn">Donations</button>
     </div>
 
@@ -34,12 +38,12 @@
     <div id="controls" style="display: flex; gap: 10px; align-items: center;">
       <input type="text" id="folderPath" style="flex-grow: 1;" placeholder="Enter full path to the folder with images (example: windows: C:\Users\User\Desktop\Images or linux: C:\Images)" />
 
-      <button id="browseBtn" class="browse-btn" onclick="browseFolder()">Browse Folder</button>
-      <button id="analyseBtn" class="analyse-btn" onclick="startScan()">Analyze</button>
+      <button id="browseBtn" class="browse-btn">Browse Folder</button>
+      <button id="analyseBtn" class="analyse-btn">Analyze</button>
     </div>
 
     <div id="main-area" style="position: relative;">
-<div id="sidebar">
+    <div id="sidebar">
       <div id="estimateBox" style="display: none;">
         <div class="estimate-label">Est. Scan Time</div>
         <div id="estimateTimer">--</div>
@@ -56,464 +60,6 @@
     </div>
 
     <div id="toast" class="toast-hidden">Address copied to clipboard!</div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-    <script>
-// Variable to hold our typing timer
-let typingTimer;
-
-// Background estimation function targeting the dedicated sidebar panel
-async function updateEstimate(path) {
-    const estimateBox = document.getElementById('estimateBox');
-    const estimateTimer = document.getElementById('estimateTimer');
-    const estimateFileCount = document.getElementById('estimateFileCount');
-    
-    if (!path || path.trim() === '') {
-        estimateBox.style.display = 'none'; // Hide if input is empty
-        return;
-    }
-    
-    // Show the box and set loading state
-    estimateBox.style.display = 'block';
-    estimateTimer.innerText = '...';
-    estimateTimer.style.color = '#888';
-    estimateFileCount.innerText = 'Calculating...';
-    
-    try {
-        const response = await fetch('/api/estimate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ folderPath: path })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success && result.count > 0) {
-            const msPerFile = 0.035; // Baseline speed
-            const estSeconds = Math.ceil(result.count * msPerFile);
-            
-            let timeString = "";
-            if (estSeconds > 60) {
-                timeString = `${Math.floor(estSeconds / 60)}m ${estSeconds % 60}s`;
-            } else if (estSeconds < 1) {
-                timeString = "< 1s";
-            } else {
-                timeString = `${estSeconds}s`;
-            }
-            
-            estimateTimer.style.color = "#4ade80"; // Bright Green for readiness
-            estimateTimer.innerText = `~${timeString}`;
-            estimateFileCount.innerText = `${result.count} files found`;
-        } else if (result.success && result.count === 0) {
-            estimateTimer.style.color = "#e94560"; // Red warning
-            estimateTimer.innerText = '0s';
-            estimateFileCount.innerText = 'No files found in directory.';
-        } else {
-            estimateBox.style.display = 'none'; // Hide on invalid path
-        }
-    } catch (err) {
-        estimateBox.style.display = 'none'; // Hide on error
-    }
-}
-
-// Event Listener: When the user manually types in the input box
-document.getElementById('folderPath').addEventListener('input', (e) => {
-    clearTimeout(typingTimer); 
-    
-    // Only run the estimate 500ms AFTER they stop typing
-    typingTimer = setTimeout(() => {
-        updateEstimate(e.target.value);
-    }, 500); 
-});
-      function escapeHTML(str) {
-        return str.replace(
-          /[&<>'"]/g,
-          (tag) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              "'": "&#39;",
-              '"': "&quot;",
-            }[tag] || tag)
-        );
-      }
-
-      var map = L.map("map", {
-        zoomSnap: 0.1,
-      }).setView([0, 0], 3);
-      map.attributionControl.setPrefix(false);
-
-      const cartoDark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        attribution: "&copy; OpenStreetMap &copy; CARTO",
-        subdomains: "abcd",
-        maxZoom: 20,
-      });
-
-      const cartoLight = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribution: "&copy; OpenStreetMap &copy; CARTO",
-        subdomains: "abcd",
-        maxZoom: 20,
-      });
-
-      const esriSatellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-        attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
-        maxZoom: 19,
-      });
-
-      const topoMap = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        attribution: "Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)",
-        maxZoom: 17,
-      });
-
-      const osmHumanitarian = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France",
-        maxZoom: 19,
-      });
-
-      const osmStandard = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-        maxZoom: 19,
-      });
-
-      const baseMaps = {
-        "Forensic Dark": cartoDark,
-        "Forensic Light": cartoLight,
-        "Satellite Imagery": esriSatellite,
-        "Topographic Terrain": topoMap,
-        "Humanitarian (Rural)": osmHumanitarian,
-        "Standard Street": osmStandard,
-      };
-
-      L.control.layers(baseMaps, null, {position: "topright"}).addTo(map);
-
-      function setMapTheme(isLight, overrideUserMap = false) {
-        // Safely remove ALL base layers before applying a new one
-        Object.values(baseMaps).forEach((layer) => {
-          if (map.hasLayer(layer)) map.removeLayer(layer);
-        });
-
-        const savedMapLayer = localStorage.getItem("selectedBaseMap");
-
-        // If the user hasn't explicitly clicked the theme toggle (overrideUserMap = false)
-        // AND they have a saved custom map layer, restore it.
-        if (savedMapLayer && baseMaps[savedMapLayer] && !overrideUserMap) {
-          baseMaps[savedMapLayer].addTo(map);
-        } else {
-          // Otherwise, fall back to the selected theme's default map
-          if (isLight) {
-            cartoLight.addTo(map);
-            localStorage.setItem("selectedBaseMap", "Forensic Light");
-          } else {
-            cartoDark.addTo(map);
-            localStorage.setItem("selectedBaseMap", "Forensic Dark");
-          }
-        }
-      }
-
-      // Adding listener to save map layer selection when changed via Leaflet UI
-      map.on("baselayerchange", function (e) {
-        localStorage.setItem("selectedBaseMap", e.name);
-      });
-
-      // --- Custom Precision Zoom Control ---
-      L.Control.ZoomMode = L.Control.extend({
-        options: {position: "bottomleft"},
-        onAdd: function (map) {
-          const container = L.DomUtil.create("div", "zoom-sensitivity-control");
-          container.innerHTML = `
-                  <input type="checkbox" id="mapPrecisionToggle" style="cursor: pointer; width: 14px; height: 14px; margin: 0;">
-                  <label for="mapPrecisionToggle" style="cursor: pointer; font-weight: bold;">Precision Zoom</label>
-              `;
-
-          L.DomEvent.disableClickPropagation(container);
-          L.DomEvent.disableScrollPropagation(container);
-
-          return container;
-        },
-      });
-
-      // Add the new control to the map
-      map.addControl(new L.Control.ZoomMode());
-
-      let markers = [];
-      let polylineLayer = null;
-      let isScanning = false;
-
-      async function startScan() {
-        if (isScanning) return; // Ignore clicks if already scanning
-        isScanning = true;
-
-        const analyseBtn = document.getElementById("analyseBtn");
-        const pathInputEl = document.getElementById("folderPath");
-
-        try {
-          const pathInput = document.getElementById("folderPath").value;
-          const statusMsg = document.getElementById("status-msg");
-          const listDiv = document.getElementById("results-list");
-
-          if (!pathInput) {
-            showCustomAlert("Please enter a path to your evidence folder.", "Input Required");
-            return;
-          }
-
-          pathInputEl.classList.add("scanning-active");
-
-          analyseBtn.innerText = "Scanning...";
-          analyseBtn.style.opacity = "0.7";
-          analyseBtn.style.cursor = "wait";
-
-          statusMsg.innerText = "Scaning in progress...";
-          listDiv.innerHTML = "";
-
-          markers.forEach((m) => map.removeLayer(m));
-          markers = [];
-
-          if (polylineLayer) {
-            map.removeLayer(polylineLayer);
-            polylineLayer = null;
-          }
-
-          const response = await fetch("/api/scan", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({folderPath: pathInput}),
-          });
-
-          const result = await response.json();
-
-          if (!result.success) {
-            statusMsg.innerText = "Scan failed.";
-            showCustomAlert(result.error, "Scan Error");
-            return;
-          }
-
-          let data = result.data;
-
-          listDiv.innerHTML = "";
-
-          if (data.length === 0) {
-            statusMsg.innerText = "GPS data not found";
-            showToast("Scan complete: No GPS data found in this directory.", true);
-            return;
-          }
-
-          // CHRONOLOGICAL SORTING ENGINE
-          data.sort((a, b) => {
-            const parseDate = (timeStr) => {
-              if (!timeStr || timeStr === "Unknown Time") return 0;
-              const formatted = timeStr.replace(/^(\d{4}):(\d{2}):(\d{2})/, "$1-$2-$3");
-              const timestamp = Date.parse(formatted);
-              return isNaN(timestamp) ? 0 : timestamp;
-            };
-            return parseDate(a.time) - parseDate(b.time);
-          });
-
-          statusMsg.innerText = "Found " + data.length + " evidence.";
-          showToast(`Success: ${data.length} evidence files located!`, false);
-
-          let latlngs = [];
-
-          // LOADING PREFERENCES
-          const showPreviews = localStorage.getItem("imagePreviews") === "true";
-          const showLines = localStorage.getItem("timelineLines") !== "false";
-          const showNumbers = localStorage.getItem("timelineNumbers") !== "false";
-
-          // RENDERING MARKERS
-
-          const distanceThreshold = 0.0001; // Approx 10-15 meters threshold
-          let groupedData = [];
-
-          data.forEach((item, index) => {
-            item.originalIndex = index;
-
-            let foundGroup = groupedData.find((group) => {
-              return Math.abs(group.lat - item.lat) < distanceThreshold && Math.abs(group.lon - item.lon) < distanceThreshold;
-            });
-
-            if (foundGroup) {
-              foundGroup.items.push(item);
-            } else {
-              groupedData.push({
-                lat: item.lat,
-                lon: item.lon,
-                items: [item],
-              });
-            }
-          });
-
-          const yellowIcon = L.divIcon({
-            className: "custom-svg-pin",
-            html: `<svg viewBox="0 0 24 40" width="25" height="41" style="filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.5));">
-                     <path d="M12 0C5.373 0 0 5.373 0 12c0 9.6 12 28 12 28s12-18.4 12-28C24 5.373 18.627 0 12 0z" fill="#fbbf24" stroke="#b45309" stroke-width="1"/>
-                     <circle cx="12" cy="12" r="4.5" fill="#ffffff" />
-                   </svg>`,
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-          });
-
-          function getPreviewHtml(item, isMap) {
-            if (!showPreviews) return "";
-            const encodedPath = encodeURIComponent(item.fullPath);
-            const mediaSrc = `/api/image?path=${encodedPath}`;
-            const isVideo = /\.(mp4|mov|webm|ogg|mkv|avi)$/i.test(item.name);
-
-            if (isVideo) {
-              return isMap ? `<video src="${mediaSrc}" class="popup-thumbnail" controls muted style="background: #000;"></video>` : `<video src="${mediaSrc}" class="evidence-thumbnail" muted></video>`;
-            } else {
-              return isMap ? `<img src="${mediaSrc}" class="popup-thumbnail" alt="Preview">` : `<img src="${mediaSrc}" class="evidence-thumbnail" alt="Preview">`;
-            }
-          }
-
-          groupedData.forEach((group) => {
-            let marker;
-            const isCluster = group.items.length > 1;
-
-            // standard blue pin for singles, custom yellow SVG pin for clusters
-            marker = isCluster ? L.marker([group.lat, group.lon], {icon: yellowIcon}).addTo(map) : L.marker([group.lat, group.lon]).addTo(map);
-
-            if (showNumbers) {
-              let tooltipContent = (group.items[0].originalIndex + 1).toString();
-
-              // If it's a cluster, append the label beneath it
-              if (isCluster) {
-                tooltipContent += `<div class="cluster-files-label">${group.items.length} Files</div>`;
-              }
-
-              marker.bindTooltip(tooltipContent, {
-                permanent: true,
-                direction: "right",
-                className: "timeline-number-tooltip",
-                offset: [-15, -2],
-              });
-            }
-
-            // --- POPUP LOGIC ---
-            if (!isCluster) {
-              const item = group.items[0];
-              const popupContent = `
-                ${getPreviewHtml(item, true)}
-                <div style="font-size: 13px;">
-                    <b>File:</b> ${escapeHTML(item.name)}<br>
-                    <b>Time:</b> ${item.time}<br>
-                    <b>Device:</b> ${item.camera}
-                </div>`;
-              marker.bindPopup(popupContent);
-            } else {
-              // a scrollable popup modal for clustered items
-              let popupContent = `<div class="scrollable-group-popup">
-                <h3 style="margin-top:0; margin-bottom: 15px; color:#e94560;">${group.items.length} Files Found Here</h3>`;
-
-              group.items.forEach((item) => {
-                popupContent += `
-                  <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;">
-                    <span style="font-size: 11px; color:#aaa; font-weight: bold;">Chronological File #${item.originalIndex + 1}</span><br>
-                    ${getPreviewHtml(item, true)}
-                    <div style="font-size: 13px;">
-                        <b>File:</b> ${escapeHTML(item.name)}<br>
-                        <b>Time:</b> ${item.time}<br>
-                        <b>Device:</b> ${item.camera}
-                    </div>
-                  </div>`;
-              });
-              popupContent += `</div>`;
-
-              marker.bindPopup(popupContent, {className: "group-popup-container", minWidth: 220});
-            }
-
-            markers.push(marker);
-
-            // Sidebar Elements
-            group.items.forEach((item) => {
-              latlngs.push([item.lat, item.lon]);
-
-              const div = document.createElement("div");
-              div.className = "evidence-item";
-              div.innerHTML = `
-                  <div class="evidence-info">
-                      <span class="evidence-name">${item.originalIndex + 1}. ${escapeHTML(item.name)}</span>
-                      <div class="evidence-meta">📅 ${item.time}</div>
-                      <div class="evidence-meta">📱 ${item.camera}</div>
-                  </div>
-                  ${getPreviewHtml(item, false)}
-              `;
-
-              div.onclick = () => {
-                map.flyTo([group.lat, group.lon], 18);
-                marker.openPopup();
-              };
-              listDiv.appendChild(div);
-            });
-          });
-
-          // RENDER TIMELINE PATH
-          if (latlngs.length > 0) {
-            const bounds = L.latLngBounds(latlngs);
-            map.fitBounds(bounds);
-
-            // Only draw the red polyline if the setting is enabled and there are 2+ points
-            if (showLines && latlngs.length > 1) {
-              polylineLayer = L.polyline(latlngs, {color: "#e94560", weight: 3}).addTo(map);
-            }
-          }
-        } catch (e) {
-          console.error(e);
-          statusMsg.innerText = "There was an server error.";
-        } finally {
-          // Unlock UI absolutely no matter what happens (success or error)
-          isScanning = false;
-
-          pathInputEl.classList.remove("scanning-active");
-
-          analyseBtn.innerText = "Analyze";
-          analyseBtn.style.opacity = "1";
-          analyseBtn.style.cursor = "pointer";
-        }
-      }
-
-      // --- Clipboard & Toast Logic ---
-      let toastTimeout;
-
-      function copyToClipboard(inputElement) {
-        // Visually selecst the text so the user knows what they clicked
-        inputElement.select();
-
-        // Uses the modern cross-platform Chromium Clipboard API for cross platform support linux macOs n windows
-        navigator.clipboard
-          .writeText(inputElement.value)
-          .then(() => {
-            showToast("Address copied to clipboard!");
-          })
-          .catch((err) => {
-            console.error("Failed to copy text: ", err);
-            showToast("Failed to copy!");
-          });
-      }
-
-      function showToast(message, isError = false) {
-        const toast = document.getElementById("toast");
-        toast.innerText = message;
-
-        // Toggle the red error class based on the outcome
-        if (isError) {
-          toast.classList.add("toast-error");
-        } else {
-          toast.classList.remove("toast-error");
-        }
-
-        toast.classList.add("show");
-
-        // Clear any existing timeout so rapid clicks don't glitch the animation
-        clearTimeout(toastTimeout);
-
-        // Hide the toast automatically after 2.5 seconds
-        toastTimeout = setTimeout(() => {
-          toast.classList.remove("show");
-        }, 2500);
-      }
-    </script>
 
     <div id="customAlertModal" class="modal">
       <div class="modal-content" style="max-width: 400px; text-align: center;">
@@ -568,10 +114,11 @@ document.getElementById('folderPath').addEventListener('input', (e) => {
             This software is built on the shoulders of giants. Thank you to the creators and maintainers of the following open-source technologies:
           </p>
           <ul>
-            <li><a href="https://leafletjs.com/" target="_blank">Leaflet</a> - Interactive Maps</li>
-            <li><a href="https://exiftool.org/" target="_blank">ExifTool</a> - Core Metadata Extraction Engine (by Phil Harvey)</li>
-            <li><a href="https://www.npmjs.com/package/exiftool-vendored" target="_blank">exiftool-vendored</a> - Node.js integration for ExifTool</li>
-            <li><a href="https://expressjs.com/" target="_blank">Express.js</a> - Local API & Routing</li>
+            <li><a href="https://www.electronjs.org/" target="_blank" rel="noopener noreferrer">Electron</a> - Cross-Platform Desktop Framework</li>
+            <li><a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> - Interactive Maps</li>
+            <li><a href="https://exiftool.org/" target="_blank" rel="noopener noreferrer">ExifTool</a> - Core Metadata Extraction Engine (by Phil Harvey)</li>
+            <li><a href="https://www.npmjs.com/package/exiftool-vendored" target="_blank" rel="noopener noreferrer">exiftool-vendored</a> - Node.js integration for ExifTool</li>
+            <li><a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth / World Atlas</a> - Offline Vector World Map</li>
           </ul>
         </div>
       </div>
@@ -587,42 +134,42 @@ document.getElementById('folderPath').addEventListener('input', (e) => {
 
         <div class="crypto-row">
           <span class="crypto-label">Bitcoin (BTC)</span>
-          <input type="text" class="crypto-input" value="bc1qay2l04mmqhztq8mj7usjlff22ay6a37x9pl9uk" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="bc1qay2l04mmqhztq8mj7usjlff22ay6a37x9pl9uk" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Ethereum, Polygon & Arbitrum (ETH, POL, ARB or Any Stablecoins)</span>
-          <input type="text" class="crypto-input" value="0xFD531dc8e3E78C57212F303f684f5A2aD312f7ca" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="0xFD531dc8e3E78C57212F303f684f5A2aD312f7ca" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Solana (SOL) or any stablecoins</span>
-          <input type="text" class="crypto-input" value="8LFVByQUKJVGnBBoAso9KqCbUnFtm875gMkumMRNnEZ2" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="8LFVByQUKJVGnBBoAso9KqCbUnFtm875gMkumMRNnEZ2" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Tron (TRX) or stablecoins</span>
-          <input type="text" class="crypto-input" value="TMEeyojQaC6HXBww7FGQKkF1ZcDeUr3esW" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="TMEeyojQaC6HXBww7FGQKkF1ZcDeUr3esW" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Kaspa (KAS)</span>
-          <input type="text" class="crypto-input" value="kaspa:qrzd6vvd9h32cxr776l5vx3q94uyyp9wp7fjs36qjx3hltldxz0kwh9qy9hak" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="kaspa:qrzd6vvd9h32cxr776l5vx3q94uyyp9wp7fjs36qjx3hltldxz0kwh9qy9hak" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Monero (XMR)</span>
-          <input type="text" class="crypto-input" value="46Aff9taPnbDqdkbSJ8rAzWqAyuKugt3b87irbcUcbLiSkgPff1YFRW3SRoLJtaA4sQhFTbdy7VFa97LpN4yhXRp3vz9vnj" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="46Aff9taPnbDqdkbSJ8rAzWqAyuKugt3b87irbcUcbLiSkgPff1YFRW3SRoLJtaA4sQhFTbdy7VFa97LpN4yhXRp3vz9vnj" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Litecoin (LTC)</span>
-          <input type="text" class="crypto-input" value="ltc1qvrhhgvyhl7f08r9pmchnzzfhgffuzwzqfpr3hm" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="ltc1qvrhhgvyhl7f08r9pmchnzzfhgffuzwzqfpr3hm" readonly />
         </div>
 
         <div class="crypto-row">
           <span class="crypto-label">Bitcoin Cash (BCH)</span>
-          <input type="text" class="crypto-input" value="qqe99z466a8wdknxvxkcw60p72ddhkg2lvfuh9jqzz" readonly onclick="copyToClipboard(this)" />
+          <input type="text" class="crypto-input" value="qqe99z466a8wdknxvxkcw60p72ddhkg2lvfuh9jqzz" readonly />
         </div>
       </div>
     </div>
@@ -679,252 +226,7 @@ document.getElementById('folderPath').addEventListener('input', (e) => {
         </div>
       </div>
     </div>
-
-    <script>
-      // Boot Loader
-      // --- Settings Modal & Logic ---
-      const settingsModal = document.getElementById("settingsModal");
-      const settingsBtn = document.getElementById("settingsBtn");
-      const closeSettingsBtn = document.querySelector(".close-settings-btn");
-      const autoUpdateToggle = document.getElementById("autoUpdateToggle");
-      const themeToggle = document.getElementById("themeToggle");
-      const previewToggle = document.getElementById("previewToggle");
-      const mapPrecisionToggle = document.getElementById("mapPrecisionToggle");
-
-      const timelineLinesToggle = document.getElementById("timelineLinesToggle");
-      const timelineNumbersToggle = document.getElementById("timelineNumbersToggle");
-
-      const donationModal = document.getElementById("donationModal");
-      const donationBtn = document.getElementById("donationBtn");
-      const closeDonationBtn = document.querySelector(".close-donation-btn");
-
-      const sidebar = document.getElementById("sidebar");
-      const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
-
-      toggleSidebarBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("collapsed");
-
-        if (sidebar.classList.contains("collapsed")) {
-          toggleSidebarBtn.innerHTML = "▶";
-          localStorage.setItem("sidebarCollapsed", "true");
-        } else {
-          toggleSidebarBtn.innerHTML = "◀";
-          localStorage.setItem("sidebarCollapsed", "false");
-        }
-
-        setTimeout(() => {
-          map.invalidateSize();
-        }, 300);
-      });
-
-      function applyZoomSettings(isPrecision) {
-        map.scrollWheelZoom.disable();
-
-        if (isPrecision) {
-          map.options.zoomSnap = 0.25;
-          map.options.zoomDelta = 0.25;
-          map.options.wheelPxPerZoomScroll = 120;
-        } else {
-          map.options.zoomSnap = 1;
-          map.options.zoomDelta = 1;
-          map.options.wheelPxPerZoomScroll = 60;
-        }
-
-        map.scrollWheelZoom.enable();
-      }
-
-      settingsBtn.onclick = function () {
-        settingsModal.style.display = "block";
-      };
-
-      closeSettingsBtn.onclick = function () {
-        settingsModal.style.display = "none";
-      };
-
-      donationBtn.onclick = function () {
-        donationModal.style.display = "block";
-      };
-
-      closeDonationBtn.onclick = function () {
-        donationModal.style.display = "none";
-      };
-
-      function applyTheme(isLight, overrideMap = false) {
-        if (isLight) {
-          document.body.classList.add("light-theme");
-        } else {
-          document.body.classList.remove("light-theme");
-        }
-        setMapTheme(isLight, overrideMap);
-      }
-
-      // Boot Loader for Settings
-      function loadUserSettings() {
-        const isTimelineLinesEnabled = localStorage.getItem("timelineLines") !== "false"; // Default true
-        timelineLinesToggle.checked = isTimelineLinesEnabled;
-
-        const isTimelineNumbersEnabled = localStorage.getItem("timelineNumbers") !== "false"; // Default true
-        timelineNumbersToggle.checked = isTimelineNumbersEnabled;
-
-        // Fetch and display dynamic app version
-        if (window.electronAPI && window.electronAPI.getAppVersion) {
-          window.electronAPI.getAppVersion().then((version) => {
-            document.getElementById("appVersionDisplay").innerText = `Version ${version}`;
-          });
-        }
-
-        // If os is macOS apply css class to push the titlebar buttons on the side making space for macos traffic lights...
-        if (window.electronAPI && window.electronAPI.getPlatform) {
-          const platform = window.electronAPI.getPlatform();
-          document.body.classList.add(`os-${platform}`);
-        }
-
-        // Check localStorage (default to true if not set)
-        const isAutoUpdateEnabled = localStorage.getItem("autoUpdate") !== "false";
-        autoUpdateToggle.checked = isAutoUpdateEnabled;
-
-        const isPreviewEnabled = localStorage.getItem("imagePreviews") === "true";
-        previewToggle.checked = isPreviewEnabled;
-
-        const savedPrecision = localStorage.getItem("precisionZoom") === "true";
-        if (mapPrecisionToggle) {
-          mapPrecisionToggle.checked = savedPrecision;
-        }
-        applyZoomSettings(savedPrecision);
-
-        // Trigger update check on boot
-        if (window.electronAPI) {
-          window.electronAPI.triggerUpdateCheck(isAutoUpdateEnabled ? "true" : "false");
-        }
-
-        const isLightMode = localStorage.getItem("lightMode") === "true";
-        themeToggle.checked = isLightMode;
-        applyTheme(isLightMode);
-      }
-
-      themeToggle.addEventListener("change", (e) => {
-        const isChecked = e.target.checked;
-        localStorage.setItem("lightMode", isChecked ? "true" : "false");
-
-        // Passing 'true' to force the map to sync with the toggle selection
-        applyTheme(isChecked, true);
-      });
-
-      // Listen for Preview Toggle
-      previewToggle.addEventListener("change", (e) => {
-        localStorage.setItem("imagePreviews", e.target.checked ? "true" : "false");
-      });
-
-      if (mapPrecisionToggle) {
-        mapPrecisionToggle.addEventListener("change", (e) => {
-          const isPrecision = e.target.checked;
-          localStorage.setItem("precisionZoom", isPrecision ? "true" : "false");
-          applyZoomSettings(isPrecision);
-        });
-      }
-
-      // Listen for user toggling the setting
-      autoUpdateToggle.addEventListener("change", (e) => {
-        const isChecked = e.target.checked;
-        localStorage.setItem("autoUpdate", isChecked ? "true" : "false");
-
-        if (isChecked && window.electronAPI) {
-          window.electronAPI.triggerUpdateCheck("true");
-        }
-      });
-
-      timelineLinesToggle.addEventListener("change", (e) => {
-        localStorage.setItem("timelineLines", e.target.checked ? "true" : "false");
-      });
-
-      timelineNumbersToggle.addEventListener("change", (e) => {
-        localStorage.setItem("timelineNumbers", e.target.checked ? "true" : "false");
-      });
-
-      document.addEventListener("DOMContentLoaded", () => {
-        loadUserSettings();
-      });
-
-      // Modal
-
-      // --- Support, Donations & Credits Modal Logic ---
-      const supportModal = document.getElementById("supportModal");
-      const supportBtn = document.getElementById("supportBtn");
-      const closeSupportBtn = document.getElementById("closeSupportBtn");
-
-      const creditsModal = document.getElementById("creditsModal");
-      const openCreditsBtn = document.getElementById("openCreditsBtn");
-      const closeCreditsBtn = document.getElementById("closeCreditsBtn");
-
-      const openDonationsFromSupportBtn = document.getElementById("openDonationsFromSupportBtn");
-
-      // Support Modal Triggers
-      supportBtn.onclick = function () {
-        supportModal.style.display = "block";
-      };
-      closeSupportBtn.onclick = function () {
-        supportModal.style.display = "none";
-      };
-
-      // Inner Modal Routing (Close Support, Open Target)
-      openCreditsBtn.onclick = function () {
-        supportModal.style.display = "none";
-        creditsModal.style.display = "block";
-      };
-
-      openDonationsFromSupportBtn.onclick = function () {
-        supportModal.style.display = "none";
-        donationModal.style.display = "block";
-      };
-
-      // Close Credits
-      closeCreditsBtn.onclick = function () {
-        creditsModal.style.display = "none";
-      };
-
-      // --- Custom Alert Logic ---
-      const alertModal = document.getElementById("customAlertModal");
-      const alertMessageEl = document.getElementById("customAlertMessage");
-      const alertTitleEl = document.getElementById("customAlertTitle");
-      const alertBtn = document.getElementById("customAlertBtn");
-
-      // Function to call instead of standard alert()
-      function showCustomAlert(message, title = "Notice") {
-        alertTitleEl.innerText = title;
-        alertMessageEl.innerText = message;
-        alertModal.style.display = "block";
-      }
-
-      // Close the alert when OK is clicked
-      alertBtn.onclick = function () {
-        alertModal.style.display = "none";
-      };
-
-      // Unified global click handler for all modals
-      window.onclick = function (event) {
-        if (event.target == supportModal) supportModal.style.display = "none";
-        if (event.target == alertModal) alertModal.style.display = "none";
-        if (event.target == settingsModal) settingsModal.style.display = "none";
-        if (event.target == donationModal) donationModal.style.display = "none";
-        if (event.target == creditsModal) creditsModal.style.display = "none";
-      };
-
-      // --- Native Folder Browser Logic ---
-      async function browseFolder() {
-        if (window.electronAPI && window.electronAPI.selectFolder) {
-          const selectedPath = await window.electronAPI.selectFolder();
-
-          // If the user picked a folder (and didn't hit cancel), update the input field
-          if (selectedPath) {
-            document.getElementById("folderPath").value = selectedPath;
-
-            // NEW: Trigger the estimation immediately after OS folder selection
-            updateEstimate(selectedPath);
-          }
-        } else {
-          showCustomAlert("Native folder selection is only available in the desktop application.", "Notice");
-        }
-      }
-    </script>
+    <script src="app://leaflet/leaflet.js"></script>
+    <script src="renderer.js"></script>
   </body>
 </html>
