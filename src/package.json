@@ -5,7 +5,6 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "server": "node src/server.js",
     "package": "electron-builder --win --publish never",
     "package:mac": "electron-builder --mac --publish never",
     "package:linux": "electron-builder --linux --publish never"
@@ -19,7 +18,9 @@
   "dependencies": {
     "electron-updater": "6.8.3",
     "exiftool-vendored": "35.20.0",
-    "express": "5.2.1"
+    "leaflet": "1.9.4",
+    "topojson-client": "3.1.0",
+    "world-atlas": "2.0.2"
   },
   "devDependencies": {
     "electron": "40.4.0",
@@ -35,6 +36,15 @@
       "node_modules/exiftool-vendored.exe/**",
       "node_modules/exiftool-vendored.pl/**"
     ],
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": false
+    },
     "directories": {
       "output": "release"
     },
@@ -48,7 +58,10 @@
       "!**/*.map",
       "!node_modules/.bin/**/*",
       "!node_modules/electron/**/*",
-      "!dist/electron/**/*.js"
+      "!dist/electron/**/*.js",
+      "!node_modules/world-atlas/*-10m.json",
+      "!node_modules/world-atlas/*-110m.json",
+      "!node_modules/world-atlas/land-*.json"
     ],
     "win": {
       "icon": "img/icon.ico",
@@ -68,7 +81,7 @@
       ]
     },
     "appx": {
-      "identityName": "Refloow.RefloowGeoForensics", 
+      "identityName": "Refloow.RefloowGeoForensics",
       "publisher": "CN=8281F212-0778-4AAA-A785-4B72BFF348A9",
       "publisherDisplayName": "Refloow",
       "applicationId": "RefloowGeoForensics",
