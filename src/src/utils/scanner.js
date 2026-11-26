@@ -71,90 +71,113 @@ const fs = require('fs');
 const path = require('path');
 const { exiftool } = require('exiftool-vendored');
 
-async function scanDirectory(dirPath) {
-    let results = [];
-
-    // Normalize the path for the current OS (Linux/Windows)
-    const normalizedPath = path.resolve(dirPath.trim());
-    
-    if (!fs.existsSync(normalizedPath)) {
-        throw new Error("Folder doesnt exist or path is not valid");
+function validateFolderPath(dirPath) {
+    if (typeof dirPath !== 'string' || dirPath.trim() === '') {
+        throw new Error('No folder path provided.');
     }
 
-    // Read directory asynchronously
-    const files = await fs.promises.readdir(normalizedPath);
+    const normalizedPath = path.resolve(dirPath.trim());
 
-    // Use a for...of loop to process files without spiking RAM
-    for (const file of files) {
-        const fullPath = path.join(normalizedPath, file);
-        
-        try {
-            const stat = await fs.promises.stat(fullPath);
-            
-            // If it's a directory, recursively scan it and append the results
-            if (stat.isDirectory()) {
-                const subDirResults = await scanDirectory(fullPath);
-                results = results.concat(subDirResults);
-                continue;
-            }
+    if (!fs.existsSync(normalizedPath)) {
+        throw new Error('Folder does not exist or path is not valid.');
+    }
 
-            // Skip anything else that isn't a file
-            if (!stat.isFile()) continue;
+    const rootStat = fs.statSync(normalizedPath);
+    if (!rootStat.isDirectory()) {
+        throw new Error('Selected path is not a directory.');
+    }
 
-            // Let ExifTool read the file (works for JPG, CR3, MP4, MOV, HEIC, etc.)
-            const tags = await exiftool.read(fullPath);
+    return normalizedPath;
+}
 
-            // Check if GPS data exists
-            if (tags.GPSLatitude && tags.GPSLongitude) {
-                
-                // Format the Time natively
-                let formattedTime = "Unknown Time";
-                const rawDate = tags.DateTimeOriginal || tags.CreateDate || tags.ModifyDate;
-                
-                if (rawDate) {
-                    formattedTime = rawDate.rawValue || rawDate.toString(); 
+async function scanDirectory(dirPath) {
+    const normalizedPath = validateFolderPath(dirPath);
+    const results = [];
+
+    async function walkAndScan(currentDir) {
+        const entries = await fs.promises.readdir(currentDir);
+
+        for (const file of entries) {
+            const fullPath = path.join(currentDir, file);
+
+            try {
+                // static path
+                const stat = await fs.promises.lstat(fullPath);
+
+                if (stat.isSymbolicLink()) continue;
+
+                if (stat.isDirectory()) {
+                    await walkAndScan(fullPath);
+                    continue;
                 }
 
-                // Push to array
-                results.push({
-                    name: file,
-                    fullPath: fullPath,
-                    lat: tags.GPSLatitude,
-                    lon: tags.GPSLongitude,
-                    time: formattedTime,
-                    camera: tags.Model || tags.Make || "Unknown device"
-                });
+                if (!stat.isFile()) continue;
+
+                const tags = await exiftool.read(fullPath);
+                const rawLat = tags.GPSLatitude;
+                const rawLon = tags.GPSLongitude;
+
+                const lat = typeof rawLat === 'number'
+                    ? rawLat
+                    : (typeof rawLat === 'string' && rawLat.trim() !== '' ? Number(rawLat) : NaN);
+                const lon = typeof rawLon === 'number'
+                    ? rawLon
+                    : (typeof rawLon === 'string' && rawLon.trim() !== '' ? Number(rawLon) : NaN);
+
+                const hasValidGps =
+                    Number.isFinite(lat) &&
+                    Number.isFinite(lon) &&
+                    lat >= -90 && lat <= 90 &&
+                    lon >= -180 && lon <= 180;
+
+                if (hasValidGps) {
+                    let formattedTime = 'Unknown Time';
+                    const rawDate = tags.DateTimeOriginal || tags.CreateDate || tags.ModifyDate;
+
+                    if (rawDate != null) {
+                        formattedTime = String(rawDate.rawValue || rawDate.toString());
+                    }
+
+                    const rawCamera = tags.Model || tags.Make || 'Unknown device';
+
+                    results.push({
+                        name: String(file),
+                        fullPath: fullPath,
+                        lat: lat,
+                        lon: lon,
+                        time: formattedTime,
+                        camera: String(rawCamera)
+                    });
+                }
+            } catch (err) {
+                // skips unreadable files or restricted folders
             }
-        } catch (err) {
-            // Silently skip unreadable files or restricted access folders
         }
     }
 
+    await walkAndScan(normalizedPath);
     return results;
 }
 
 async function countFiles(dirPath) {
+    const normalizedPath = validateFolderPath(dirPath);
     let count = 0;
-    const normalizedPath = path.resolve(dirPath.trim());
-    
-    if (!fs.existsSync(normalizedPath)) {
-        throw new Error("Folder doesnt exist or path is not valid");
-    }
 
-    // Fast recursive directory walker
     async function walk(dir) {
-        const files = await fs.promises.readdir(dir);
-        for (const file of files) {
+        const entries = await fs.promises.readdir(dir);
+        for (const file of entries) {
             const fullPath = path.join(dir, file);
             try {
-                const stat = await fs.promises.stat(fullPath);
+                const stat = await fs.promises.lstat(fullPath);
+                if (stat.isSymbolicLink()) continue;
+
                 if (stat.isDirectory()) {
-                    await walk(fullPath); // Recurse into subdirectories
+                    await walk(fullPath);
                 } else if (stat.isFile()) {
                     count++;
                 }
             } catch (err) {
-                // Silently skip unreadable files
+                // skips unreadable files
             }
         }
     }
