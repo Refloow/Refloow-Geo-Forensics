@@ -985,3 +985,11 @@ body.light-theme #estimateTimer {
 body.light-theme #estimateFileCount {
     color: #555555;
 }
+
+#map.offline-map-active {
+  background-color: #0f172a;
+}
+
+body.light-theme #map.offline-map-active {
+  background-color: #dbeafe;
+}
