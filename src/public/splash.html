@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src app:;">
     <title>Loading Refloow GeoForensics</title>
     <!-- I used css inside of the file instead in the styles.css here becuase i want this to be portable and likely used in other electron apps -->
     <style>
@@ -67,7 +68,7 @@
 </head>
 <body>
     <div class="splash-container">
-        <img src="../img/RefloowLogo.png" alt="Refloow Logo" class="logo-img">
+        <img src="app://img/RefloowLogo.png" alt="Refloow Logo" class="logo-img">
         <div class="loading-text">loading...</div>
         
         <div class="loader-bar">
